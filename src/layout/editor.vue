@@ -54,7 +54,7 @@
             <template #append>
                 <div class="d-flex justify-center pa-4">
                     <v-btn icon variant="text">
-                        <v-avatar image="https://cdn.vuetifyjs.com/images/john.jpg" />
+                        <v-avatar image="/images/john.jpg" />
 
                         <v-menu activator="parent" location="top">
                             <v-list density="compact" nav slim>
@@ -106,10 +106,15 @@
                 <RouterView></RouterView>
             </div>
         </v-main>
+
+        <v-footer class="justify-center border-t-sm" app>
+            {{ footerStore.message }}
+        </v-footer>
     </v-layout>
 </template>
 
 <script setup lang="ts">
+import { useFooterStore } from '@/stores/footer'
 import { shallowRef } from 'vue'
 
 const drawer = shallowRef(true)
@@ -117,6 +122,8 @@ const drawer = shallowRef(true)
 const projectName = shallowRef('Unnamed Project')
 
 const projectNameEdited = shallowRef(false)
+
+const footerStore = useFooterStore()
 </script>
 
 <style scoped></style>

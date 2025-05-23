@@ -1,0 +1,65 @@
+.splitpanes:deep(.splitpanes__splitter) {
+  min-height: 4px;
+  min-width: 4px;
+  background-color: #0000000f;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.splitpanes:deep(.splitpanes__splitter):hover {
+  min-height: 8px;
+  min-width: 8px;
+}
+
+.splitpanes:deep(.splitpanes__splitter::after) {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 20px;
+  transform: translate(calc(-50% - 1px), -50%);
+  background-color: rgb(var(--v-border-color));
+  transition: background-color 0.3s;
+  opacity: 0.3;
+}
+
+.splitpanes:deep(.splitpanes__splitter::before) {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 20px;
+  transform: translate(calc(-50% + 1px), -50%);
+  background-color: rgb(var(--v-border-color));
+  transition: background-color 0.3s;
+  opacity: 0.3;
+}
+
+.splitpanes.splitpanes--horizontal:deep(> .splitpanes__splitter::after) {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 1px;
+  transform: translate(-50%, calc(-50% - 1px));
+  background-color: rgb(var(--v-border-color));
+  transition: background-color 0.3s;
+  opacity: 0.3;
+
+}
+
+.splitpanes.splitpanes--horizontal:deep(> .splitpanes__splitter::before) {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 1px;
+  transform: translate(-50%, calc(-50% + 1px));
+  background-color: rgb(var(--v-border-color));
+  transition: background-color 0.3s;
+  opacity: 0.3;
+}

@@ -2,7 +2,7 @@
   "name": "ai-video",
   "private": true,
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -12,8 +12,12 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "@fontsource/roboto": "5.2.5",
     "@mdi/font": "7.4.47",
+    "gsap": "^3.13.0",
+    "install": "^0.13.0",
     "pinia": "^3.0.2",
     "pinia-plugin-persistedstate": "^4.3.0",
     "splitpanes": "^4.0.3",

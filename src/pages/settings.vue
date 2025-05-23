@@ -18,7 +18,7 @@
                 <v-btn class="ms-1 opacity-60" icon="mdi-bell-outline" />
 
                 <v-btn class="ms-1" icon>
-                    <v-avatar image="https://cdn.vuetifyjs.com/images/john.png" />
+                    <v-avatar image="/images/john.jpg" />
 
                     <v-menu activator="parent" origin="top">
                         <v-list>
