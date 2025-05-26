@@ -10,9 +10,7 @@
                 <pane min-size="50">
                     <v-sheet class="pa-4  " height="100%" width="100%">
                         <viewport-wrapper>
-                            <div class="w-100 h-100 bg-black">
-                                <preview></preview>
-                            </div>
+                            <preview></preview>
                         </viewport-wrapper>
                     </v-sheet>
                 </pane>

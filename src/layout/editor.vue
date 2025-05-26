@@ -5,45 +5,45 @@
                 <v-avatar image="@/assets/logo.png" />
             </div>
 
-            <v-btn class="text-none" stacked tile variant="text" width="80">
+            <v-btn class="text-none" stacked tile variant="text" width="80" @click="assetsStore.change('Human')">
                 <v-icon>mdi-human-edit</v-icon>
 
                 <span class="text-caption">Human</span>
             </v-btn>
 
-            <v-btn class="text-none" stacked tile variant="text" width="80">
+            <v-btn class="text-none" stacked tile variant="text" width="80" @click="assetsStore.change('Image')">
 
                 <v-icon>mdi-image-outline</v-icon>
 
                 <span class="text-caption">Image</span>
             </v-btn>
 
-            <v-btn class="text-none" stacked tile variant="text" width="80">
+            <v-btn class="text-none" stacked tile variant="text" width="80" @click="assetsStore.change('Movie')">
                 <v-icon>mdi-movie-play-outline</v-icon>
 
                 <span class="text-caption">Movie</span>
             </v-btn>
 
-            <v-btn class="text-none" stacked tile variant="text" width="80">
+            <v-btn class="text-none" stacked tile variant="text" width="80" @click="assetsStore.change('MovieFX')">
                 <v-icon>mdi-movie-filter-outline</v-icon>
 
                 <span class="text-caption">MovieFX</span>
             </v-btn>
 
 
-            <v-btn class="text-none" stacked tile variant="text" width="80">
+            <v-btn class="text-none" stacked tile variant="text" width="80" @click="assetsStore.change('Text')">
                 <v-icon>mdi-format-text</v-icon>
 
                 <span class="text-caption">Text</span>
             </v-btn>
 
-            <v-btn class="text-none" stacked tile variant="text" width="80">
+            <v-btn class="text-none" stacked tile variant="text" width="80" @click="assetsStore.change('Subtitle')">
                 <v-icon>mdi-subtitles-outline</v-icon>
 
                 <span class="text-caption">Subtitle</span>
             </v-btn>
 
-            <v-btn class="text-none" stacked tile variant="text" width="80">
+            <v-btn class="text-none" stacked tile variant="text" width="80" @click="assetsStore.change('History')">
                 <v-badge color="error" content="39" location="top end">
                     <v-icon>mdi-history</v-icon>
                 </v-badge>
@@ -114,6 +114,7 @@
 </template>
 
 <script setup lang="ts">
+import { useAssetsStore } from '@/stores/assets'
 import { useFooterStore } from '@/stores/footer'
 import { shallowRef } from 'vue'
 
@@ -124,6 +125,8 @@ const projectName = shallowRef('Unnamed Project')
 const projectNameEdited = shallowRef(false)
 
 const footerStore = useFooterStore()
+
+const assetsStore = useAssetsStore()
 </script>
 
 <style scoped></style>

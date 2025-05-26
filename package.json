@@ -22,6 +22,7 @@
     "pinia-plugin-persistedstate": "^4.3.0",
     "splitpanes": "^4.0.3",
     "vue": "^3.5.13",
+    "vue3-moveable": "^0.28.0",
     "vuetify": "^3.8.1"
   },
   "devDependencies": {
