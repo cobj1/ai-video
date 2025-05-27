@@ -16,6 +16,7 @@
     "@ffmpeg/util": "^0.12.2",
     "@fontsource/roboto": "5.2.5",
     "@mdi/font": "7.4.47",
+    "@vueuse/core": "^13.2.0",
     "gsap": "^3.13.0",
     "install": "^0.13.0",
     "pinia": "^3.0.2",
