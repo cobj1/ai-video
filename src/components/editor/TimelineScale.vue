@@ -47,4 +47,7 @@ watch(width, () => {
 </script>
 
 <style scoped>
+.scale-chunk {
+    transition: width 0.3s;
+}
 </style>

@@ -7,7 +7,6 @@
 
 <script setup lang="ts">
 import { useTimelineScaleStore } from '@/stores/editor/timeline-scale';
-import { onBeforeUnmount, onMounted } from 'vue';
 
 const timelineScaleStore = useTimelineScaleStore()
 

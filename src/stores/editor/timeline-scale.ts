@@ -21,59 +21,59 @@ let width = shallowRef(0);
 /**
  * 缩放/变焦
  */
-const zoom = shallowRef(6);
+const zoom = shallowRef(50);
 
 watchThrottled(
   zoom,
   () => {
-    if (zoom.value == 1) {
+    if (zoom.value < 10) {
       density.value = 1;
-      chunkWidth.value = 200;
+      chunkWidth.value = 200 - zoom.value * 10;
       conspicuousScale.value = 2;
     }
-    if (zoom.value == 2) {
+    if (zoom.value >= 10 && zoom.value < 20) {
       density.value = 1;
-      chunkWidth.value = 100;
+      chunkWidth.value = 100 - (zoom.value - 10) * 5;
       conspicuousScale.value = 2;
     }
-    if (zoom.value == 3) {
+    if (zoom.value >= 20 && zoom.value < 30) {
       density.value = 1;
-      chunkWidth.value = 50;
+      chunkWidth.value = 50 - (zoom.value - 20) * 2.5;
       conspicuousScale.value = 2;
     }
-    if (zoom.value == 4) {
+    if (zoom.value >= 30 && zoom.value < 40) {
       density.value = 1;
-      chunkWidth.value = 25;
+      chunkWidth.value = 25 - (zoom.value - 30) * 0.5;
       conspicuousScale.value = 10;
     }
-    if (zoom.value == 5) {
+    if (zoom.value >= 40 && zoom.value < 50) {
       density.value = 3;
-      chunkWidth.value = 50;
+      chunkWidth.value = 50 - (zoom.value - 40) * 2.5;
       conspicuousScale.value = 5;
     }
-    if (zoom.value == 6) {
+    if (zoom.value >= 50 && zoom.value < 60) {
       density.value = 3;
-      chunkWidth.value = 25;
+      chunkWidth.value = 25 - (zoom.value - 50) * 0.5;
       conspicuousScale.value = 10;
     }
-    if (zoom.value == 7) {
+    if (zoom.value >= 60 && zoom.value < 70) {
       density.value = 12;
-      chunkWidth.value = 50;
+      chunkWidth.value = 50 - (zoom.value - 60) * 2.5;
       conspicuousScale.value = 5;
     }
-    if (zoom.value == 8) {
+    if (zoom.value >= 70 && zoom.value < 80) {
       density.value = 12;
-      chunkWidth.value = 25;
+      chunkWidth.value = 25 - (zoom.value - 70) * 0.5;
       conspicuousScale.value = 10;
     }
-    if (zoom.value == 9) {
+    if (zoom.value >= 80 && zoom.value < 90) {
       density.value = 48;
-      chunkWidth.value = 50;
+      chunkWidth.value = 50 - (zoom.value - 80) * 2.5;
       conspicuousScale.value = 5;
     }
-    if (zoom.value == 10) {
+    if (zoom.value >= 90 && zoom.value <= 100) {
       density.value = 48;
-      chunkWidth.value = 25;
+      chunkWidth.value = 25 - (zoom.value - 90) * 0.5;
       conspicuousScale.value = 10;
     }
   },
@@ -88,7 +88,7 @@ const frameRate = shallowRef(30);
 /**
  * 内容时长,用来计算时间线长度,单位 frame
  */
-const contentDuration = shallowRef(200);
+const contentDuration = shallowRef(100);
 
 /**
  * 每个块代表包含几个序列帧
@@ -99,7 +99,7 @@ const density = shallowRef(3);
  * 显示几个刻度块,显示内容时长四倍的刻度快，参照jianying
  */
 const chunks = computed(() =>
-  Math.max(Math.trunc(contentDuration.value / density.value) * 4, 100)
+  Math.max(Math.trunc(contentDuration.value / density.value) * 4, 200)
 );
 
 /**
