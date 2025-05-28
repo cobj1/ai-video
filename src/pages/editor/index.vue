@@ -3,7 +3,7 @@
         <pane min-size="40" size="60">
             <splitpanes>
                 <pane min-size="20">
-                    <v-sheet height="100%" width="100%">
+                    <v-sheet class="overflow-y-auto" height="100%" width="100%">
                         <assets></assets>
                     </v-sheet>
                 </pane>

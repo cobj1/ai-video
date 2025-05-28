@@ -1,21 +1,17 @@
 <template>
-    <div class="timeline-scale d-flex"
-        :style="{ 'min-width': `${width}px`, 'width': 'fit-content', 'height': `${height}px` }">
-
+    <div ref="timelineScaleRef" class="timeline-scale timeline-scale d-flex mb-4 flex-1-0	"
+        :style="{ 'width': 'fit-content', 'height': `10px` }">
         <div class="scale-chunk flex-0-1 position-relative border-s-sm d-flex justify-space-between "
-            :class="{ 'border-opacity-100': ((chunk - 1) % conspicuousScale) == 0 || chunk - 1 == 0 }"
-            :style="{ 'width': `${chunkWidth}px` }" v-for="chunk in chunks" :key="`chunk_${chunk}`">
-
-            <!-- 帧图 -->
-            <div class="frame flex-fill" v-for="frame in density" :key="`frame_${(chunk - 1) * density + frame}`">
-            </div>
+            :class="{ 'border-opacity-100': ((chunk - 1) % timelineScaleStore.conspicuousScale) == 0 || chunk - 1 == 0 }"
+            :style="{ 'width': `${timelineScaleStore.chunkWidth}px` }" v-for="chunk in timelineScaleStore.chunks"
+            :key="`chunk_${chunk}`">
 
             <!-- 刻度块的标注 -->
             <div style="position: absolute; top: -2px; font-size: 10px;  left: 4px; color: #fff8;">
 
                 <!-- 明显刻度 -->
-                <span v-if="((chunk - 1) % conspicuousScale) == 0 || chunk - 1 == 0">
-                    {{ getLabelByFrame((chunk - 1) * density) }}
+                <span v-if="((chunk - 1) % timelineScaleStore.conspicuousScale) == 0 || chunk - 1 == 0">
+                    {{ timelineScaleStore.getLabelByChunkIndex(chunk - 1) }}
                 </span>
             </div>
         </div>
@@ -23,8 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, shallowRef } from 'vue';
-
 /**
  * 时间线刻度
  * 
@@ -34,66 +28,23 @@ import { computed, shallowRef } from 'vue';
  *      对齐素材： 帮助你将不同的视频、音频或图片素材精确地对齐。
  *      管理关键帧： 显示动画或特效的关键帧位置。
  */
+import { useTimelineScaleStore } from '@/stores/editor/timeline-scale';
+import { onMounted, useTemplateRef, watch } from 'vue'
+import { useElementSize } from '@vueuse/core'
 
-const props = defineProps({
-    // 缩放/变焦
-    zoom: {
-        type: Number,
-        default: 1
-    },
-    // 帧速率，每秒多少帧
-    frameRate: {
-        type: Number,
-        default: 30
-    }
+const timelineScaleStore = useTimelineScaleStore()
+
+
+const el = useTemplateRef('timelineScaleRef')
+
+const { width } = useElementSize(el)
+
+
+watch(width, () => {
+    timelineScaleStore.width = width.value
 })
 
-/**
- * 整体时间刻度长度
- */
-const width = shallowRef(2000)
-
-/**
- * 整体时间刻度高度
- */
-const height = shallowRef(10)
-
-/**
- * 显示几个刻度块
- */
-const chunks = computed(() => 100)
-
-/**
- * 每个刻度块的宽度
- */
-const chunkWidth = computed(() => 100)
-
-/**
- * 密度：每个刻度中包含多少帧
- */
-const density = computed(() => 30)
-
-/**
- * 明显的刻度，每多少块显示一个明显刻度
- */
-const conspicuousScale = computed(() => 5)
-
-/**
- * 通过帧数获取标注
- */
-const getLabelByFrame = (frame: number) => {
-    if (frame % props.frameRate == 0) {
-        const mm = Math.trunc((frame / props.frameRate / 60))
-        const ss = (frame / props.frameRate - mm * 60)
-        return `${mm.toString().padStart(2, '0')}.${ss.toString().padStart(2, '0')}`
-    } else {
-        return `${frame % props.frameRate} f`;
-    }
-}
 </script>
 
 <style scoped>
-.scale-chunk {
-    transition: width 0.3s;
-}
 </style>
