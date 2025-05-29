@@ -17,6 +17,7 @@ declare module 'vue' {
     TimelineLayer: typeof import('./components/editor/TimelineLayer.vue')['default']
     TimelineLayerControl: typeof import('./components/editor/TimelineLayerControl.vue')['default']
     TimelineLayerItem: typeof import('./components/editor/TimelineLayerItem.vue')['default']
+    TimelineMedia: typeof import('./components/editor/TimelineMedia.vue')['default']
     TimelineScale: typeof import('./components/editor/TimelineScale.vue')['default']
     TimelineTool: typeof import('./components/editor/TimelineTool.vue')['default']
     ViewportWrapper: typeof import('./components/window/ViewportWrapper.vue')['default']
