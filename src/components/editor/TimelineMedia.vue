@@ -8,7 +8,7 @@
         :elementSnapDirections="elementSnapDirections"
         :maxSnapElementGuidelineDistance="maxSnapElementGuidelineDistance" :elementGuidelines="['.target']"
         @drag="onDrag" @resize="onResize" @render="onRender" @bound="onBound" />
-    <Selecto :dragContainer="window" :selectableTargets="['.target']" :hitRate="0" :selectByClick="true"
+    <Selecto :dragContainer="windowRef" :selectableTargets="['.target']" :hitRate="0" :selectByClick="true"
         :selectFromInside="false" :toggleContinueSelect="['shift']" :ratio="0" @dragStart="onDragStart"
         @selectEnd="onSelectEnd"></Selecto>
 </template>
@@ -17,6 +17,8 @@
 import Moveable from "vue3-moveable";
 import Selecto from "vue3-selecto";
 import { ref } from "vue";
+
+const windowRef = ref(window)
 
 const targets = ref([]);
 
@@ -38,7 +40,7 @@ const snapGap = true;
 const snapDirections = { "left": true, "right": true };
 const elementSnapDirections = { "left": true, "right": true };
 
-const maxSnapElementGuidelineDistance = null;
+const maxSnapElementGuidelineDistance = ref();
 
 const bounds = { "left": 0, "top": 0, "right": 0, "bottom": 0, "position": "css" };
 const edge = [];

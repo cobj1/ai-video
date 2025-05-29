@@ -20,6 +20,7 @@ declare module 'vue' {
     TimelineMedia: typeof import('./components/editor/TimelineMedia.vue')['default']
     TimelineScale: typeof import('./components/editor/TimelineScale.vue')['default']
     TimelineTool: typeof import('./components/editor/TimelineTool.vue')['default']
+    ViewportControl: typeof import('./components/editor/ViewportControl.vue')['default']
     ViewportWrapper: typeof import('./components/window/ViewportWrapper.vue')['default']
   }
 }
