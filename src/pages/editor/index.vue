@@ -28,6 +28,7 @@
             </v-sheet>
         </pane>
     </splitpanes>
+    <draggable-source-wizard></draggable-source-wizard>
 </template>
 
 <script setup lang="ts">

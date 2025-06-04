@@ -1,0 +1,29 @@
+.timeline .moveable-control.moveable-resizable {
+  display: none;
+}
+
+.timeline .moveable-control.moveable-resizable.moveable-w {
+  display: block;
+  width: 4px;
+  height: 60px;
+  background-color: #eeeeee88;
+  margin-top: -30px;
+  margin-left: 0px;
+  border-radius: 0;
+  border: none;
+}
+
+.timeline .moveable-control.moveable-resizable.moveable-e {
+  display: block;
+  width: 4px;
+  height: 60px;
+  background-color: #eeeeee88;
+  margin-top: -30px;
+  margin-left: -4px;
+  border-radius: 0;
+  border: none;
+}
+
+.timeline .moveable-line {
+  background: #eeeeee88 !important;
+}

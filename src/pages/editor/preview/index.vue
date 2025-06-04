@@ -6,9 +6,9 @@
             <v-img src="@/assets/demo-1.png"></v-img>
         </div>
 
-        <Moveable className="moveable" v-for="item in items" v-bind:target="[`.target_${item.id}`]"
-            v-bind:draggable="true" v-bind:scalable="true" v-bind:rotatable="true" @drag="onDrag" @scale="onScale"
-            @rotate="onRotate" />
+        <Moveable className="moveable" v-for="item in items" :target="[`.target_${item.id}`]" :draggable="true"
+            :scalable="true" :rotatable="true" :keepRatio="true" :throttleResize="1" @drag="onDrag"
+            @scale="onScale" @rotate="onRotate" />
     </div>
 </template>
 

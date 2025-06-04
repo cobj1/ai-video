@@ -1,72 +1,45 @@
-<script setup>
+<script>
 import Moveable from "vue3-moveable";
-import Selecto from "vue3-selecto";
 import { ref } from "vue";
 
-const windowRef = window
-
-const moveableRef = ref(null);
-const targets = ref([]);
-
-const draggable = true;
-const throttleDrag = 1;
-const edgeDraggable = false;
-const startDragRotate = 0;
-const throttleDragRotate = 0;
-const scalable = true;
-const keepRatio = false;
-const throttleScale = 0;
-const snappable = true;
-const bounds = { "left": 0, "top": 0, "right": 0, "bottom": 0, "position": "css" };
-const targetRef = ref(null);
-const onDrag = e => {
-    e.target.style.transform = e.transform;
-};
-const onScale = e => {
-    e.target.style.transform = e.drag.transform;
-};
-const onBound = e => {
-    console.log(e);
-};
-const onDragStart = e => {
-    const moveable = moveableRef.value;
-    const target = e.inputEvent.target;
-    if (target.tagName === "BUTTON" || moveable.isMoveableElement(target)
-        || targets.value.some(t => t === target || t.contains(target))
-    ) {
-        e.stop();
+export default {
+    components: { Moveable },
+    setup() {
+        const snapContainer = ref(".snapGrid");
+        const onMoustEnter = (e) => {
+            snapContainer.value = e.currentTarget;
+        };
+        const onDragStart = () => {
+            document.querySelectorAll(".snapGrid").forEach(grid => {
+                grid.addEventListener("mouseenter", onMoustEnter);
+            });
+        };
+        const onDrag = e => {
+            e.target.style.transform = e.transform;
+            e.target.style.pointerEvents = "none";
+        };
+        const onDragEnd = e => {
+            e.target.style.pointerEvents = "";
+            document.querySelectorAll(".snapGrid").forEach(grid => {
+                grid.removeEventListener("mouseenter", onMoustEnter);
+            });
+        };
+        return { snapContainer, onDragStart, onDrag, onDragEnd };
     }
 };
-const onSelectEnd = e => {
-    console.log(e)
-    const moveable = moveableRef.value;
-    if (e.isDragStart) {
-        e.inputEvent.preventDefault();
-        moveable.waitToChangeTarget().then(() => {
-            moveable.dragStart(e.inputEvent);
-        });
-    }
-    targets.value = e.selected;
-};
-
-
 </script>
 <template>
-    <div class="root">
-        <div class="container" style="width: 500px;height: 100px;border: 1px solid #ccc;">
-            <div class="target target1" style="left: 50px;top: 0;">Target1</div>
-            <div class="target target2" style="left: 250px;top: 0;">Target2</div>
-            <div class="target target3" style="left: 400px;top: 0;">Target3</div>
-            <Moveable ref="moveableRef" :target="targets" :draggable="draggable" :throttleDrag="throttleDrag"
-                :edgeDraggable="edgeDraggable" :startDragRotate="startDragRotate"
-                :throttleDragRotate="throttleDragRotate" :scalable="scalable" :keepRatio="keepRatio"
-                :throttleScale="throttleScale" :snappable="snappable" :bounds="bounds" @drag="onDrag" @scale="onScale"
-                @bound="onBound" />
+    <div class="root" style="position: relative;border: 1px solid black;">
+        <Moveable :target="'.target'" :draggable="true" :snappable="true" :horizontalGuidelines="[0, 100, 200, 300]"
+            :verticalGuidelines="[0, 100, 200, 300]" :snapContainer="snapContainer" @dragStart="onDragStart"
+            @drag="onDrag" @dragEnd="onDragEnd" />
+        <div class="container" style="width: 100vw; height: 100vh;">
+            <div class="snapGrid" style="  width: 100%; height: 300px; background-color: blueviolet;">
+                <div class="target" style="width: 200px;height: 150px;transform: translate(0px, 0px) scale(1.5, 1);">
+                    Target</div>
+            </div>
+            <div class="snapGrid" style=" margin-top:100px;  width: 100%; height: 300px; background-color: blueviolet;"></div>
         </div>
-
-        <Selecto :dragContainer="windowRef" :selectableTargets="['.target']" :hitRate="0" :selectByClick="true"
-            :selectFromInside="false" :toggleContinueSelect="['shift']" :ratio="0" @dragStart="onDragStart"
-            @selectEnd="onSelectEnd"></Selecto>
     </div>
 </template>
 
@@ -111,7 +84,7 @@ const onSelectEnd = e => {
     position: absolute;
     width: 100px;
     height: 100px;
-    top: 150px;
+    top: 100px;
     left: 100px;
     line-height: 100px;
     text-align: center;

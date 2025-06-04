@@ -9,7 +9,7 @@ import Subtitle from "@/pages/editor/assets/subtitle.vue";
 import History from "@/pages/editor/assets/history.vue";
 
 export const useAssetsStore = defineStore("assets", () => {
-  const view = shallowRef(Human);
+  const view = shallowRef(Movie);
 
   const change = (type: string) => {
     switch (type) {

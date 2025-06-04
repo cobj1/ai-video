@@ -3,16 +3,21 @@
         <p class="text-h5 font-weight-bold mb-4">Customers also bought</p>
         <v-row>
             <v-col v-for="(item, i) in products" :key="i" cols="12" md="6" sm="12">
-                <v-card class="mx-auto" flat height="300" :image="item.img" link :ripple="false" rounded="lg">
-                    <template #image>
-                        <v-img cover
-                            gradient="to bottom, rgba(var(--v-theme-surface), .1), rgba(var(--v-theme-surface), 1)" />
-                    </template>
+                <draggable-source-container :data='{
+                    title: "Pre-fab homes",
+                    cover: "http://localhost:3000/src/assets/demo-1.png",
+                }'>
+                    <v-card class="mx-auto" flat height="300" :image="item.img" link :ripple="false" rounded="lg">
+                        <template #image>
+                            <v-img cover
+                                gradient="to bottom, rgba(var(--v-theme-surface), .1), rgba(var(--v-theme-surface), 1)" />
+                        </template>
 
-                    <p class="text-body-1 font-weight-bold position-absolute right-0 bottom-0 pa-4"> {{ item.title }}
-                    </p>
-                </v-card>
-
+                        <p class="text-body-1 font-weight-bold position-absolute right-0 bottom-0 pa-4">
+                            {{ item.title }}
+                        </p>
+                    </v-card>
+                </draggable-source-container>
 
                 <v-btn block class="text-none mt-2" color="surface-light" :ripple="false" rounded="lg"
                     text="Add to Timeline" variant="flat" />
@@ -49,6 +54,7 @@ const products = [
         img: 'https://images.unsplash.com/photo-1603808033192-082d6919d3e1?q=80&w=2030&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     },
 ]
+
 </script>
 
 <style scoped></style>

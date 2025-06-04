@@ -22,6 +22,7 @@ declare module 'vue-router/auto-routes' {
     '/demo/draggable': RouteRecordInfo<'/demo/draggable', '/demo/draggable', Record<never, never>, Record<never, never>>,
     '/demo/ffmpeg.wasm.demo': RouteRecordInfo<'/demo/ffmpeg.wasm.demo', '/demo/ffmpeg/wasm/demo', Record<never, never>, Record<never, never>>,
     '/demo/timeline.media': RouteRecordInfo<'/demo/timeline.media', '/demo/timeline/media', Record<never, never>, Record<never, never>>,
+    '/demo/variable-situations--tests-changing-snap-container': RouteRecordInfo<'/demo/variable-situations--tests-changing-snap-container', '/demo/variable-situations--tests-changing-snap-container', Record<never, never>, Record<never, never>>,
     '/editor': RouteRecordInfo<'/editor', '/editor', Record<never, never>, Record<never, never>>,
     '/editor/': RouteRecordInfo<'/editor/', '/editor', Record<never, never>, Record<never, never>>,
     '/editor/assets/': RouteRecordInfo<'/editor/assets/', '/editor/assets', Record<never, never>, Record<never, never>>,

@@ -8,6 +8,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    DraggableContainer: typeof import('./components/editor/DraggableContainer.vue')['default']
+    DraggableSourceContainer: typeof import('./components/editor/DraggableSourceContainer.vue')['default']
+    DraggableSourceWizard: typeof import('./components/editor/DraggableSourceWizard.vue')['default']
+    DraggableTargetContainer: typeof import('./components/editor/DraggableTargetContainer.vue')['default']
+    DraggableWizard: typeof import('./components/editor/DraggableWizard.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Human: typeof import('./components/assets/human.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
