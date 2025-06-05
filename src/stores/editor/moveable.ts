@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import { nextTick, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { useMouseInLayer } from "@/hooks/useMouseInLayer";
 import { useTransferLayer } from "@/hooks/useTransferLayer";
-import { useFindMediaById } from "@/hooks/useFind";
-import { useMediaLocation } from "@/hooks/useLocation";
 import { useTimelineScaleStore } from "./timeline-scale";
 import { useDataStore } from "../data";
-import { useMediaRearrange } from "@/hooks/useRearrange";
+import { useMediaOrigin } from "@/hooks/useRearrange";
+import { useSetMediaTime } from "@/hooks/useSetMediaTime";
+import { useMediaFocus } from "@/hooks/useMediaFocus";
 
 const timelineScaleStore = useTimelineScaleStore();
 
@@ -39,42 +39,28 @@ const attributes = ref({
 
 let moveableRef = ref();
 
+const getMoveableRef = computed(() => moveableRef);
+
 const setMoveableRef = (ref: any) => (moveableRef = ref);
 
-const onDrag = (e: any) => {
-  e.target.style.transform = e.transform;
-
-  const location = useMediaLocation(e.target.id);
-
-  const media = useFindMediaById(e.target.id);
-  if (media && location) {
-    const frames = media.time.end - media.time.start;
-    const start = Math.trunc(
-      location.offset.x / timelineScaleStore.getFrameWidth
-    );
-    const end = start + frames;
-
-    dataStore.setTime(media, { start, end });
-  }
-};
+const onDrag = (e: any) => {};
 
 const onDragStart = (e: any) => {};
 
 const onDragEnd = (e: any) => {
+  useSetMediaTime(e.target.id);
+
   const layer = useMouseInLayer(e.inputEvent);
 
   if (layer) {
+    /* 资源更换图层 */
     if (useTransferLayer(e.target.id, layer.id)) {
-      nextTick(() => {
-        const medium = useFindMediaById(e.target.id);
-
-        target.value = medium.el;
-      });
+      useMediaFocus(e.target.id);
     } else {
-      useMediaRearrange(e.target.id);
+      useMediaOrigin(e.target.id);
     }
   } else {
-    useMediaRearrange(e.target.id);
+    useMediaOrigin(e.target.id);
   }
 };
 
@@ -114,6 +100,7 @@ export const useMoveableStore = defineStore("moveable", () => {
     target,
     data,
     attributes,
+    getMoveableRef,
     setMoveableRef,
     onDrag,
     onDragStart,

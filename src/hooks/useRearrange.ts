@@ -1,24 +1,37 @@
 import type { ID } from "@/types/common";
-import { useFindLayerByMediaid, useFindMediaById } from "./useFind";
+import { useFindMediaById } from "./useFind";
+import { useMoveableStore } from "@/stores/editor/moveable";
+import { nextTick } from "vue";
 
-export const useMediaRearrange = (mediaid: ID) => {
-  const media = useFindMediaById(mediaid);
+export const useMediaOrigin = (mediaid: ID) => {
+  const media = useFindMediaById(mediaid) as any;
 
-  const layer = useFindLayerByMediaid(mediaid);
+  if (media && media.el != null) {
+    const moveableStore = useMoveableStore();
 
-  if (media?.el) {
-    const computedStyle = window.getComputedStyle(media.el);
+    moveableStore.target = null;
 
-    const transformValue = computedStyle.getPropertyValue("transform");
+    nextTick(() => {
+      const computedStyle = window.getComputedStyle(media.el);
 
-    try {
-      const matrix = new DOMMatrix(transformValue);
+      const transformValue = computedStyle.getPropertyValue("transform");
 
-      matrix.f = 0;
-      
-      media.el.style.transform = matrix.toString();
-    } catch (e) {
-      console.error(e);
-    }
+      try {
+        const matrix = new DOMMatrix(transformValue);
+
+        matrix.e = 0;
+
+        matrix.f = 0;
+
+        media.el.style.transform = matrix.toString();
+      } catch (e) {
+        console.error(e);
+      }
+
+      nextTick(() => {
+        moveableStore.target = media.el;
+        moveableStore.getMoveableRef.value.updateTarget();
+      });
+    });
   }
 };

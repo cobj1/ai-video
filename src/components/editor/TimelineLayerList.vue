@@ -9,7 +9,7 @@
                 :ref="(component: any) => { if (component) { medium.el = markRaw(component.$el) } }" draggable="true"
                 @click="moveableStore.onClickMedia($event, medium)"
                 @dragstart="moveableStore.onDragStartMedia($event, medium)">
-                {{ `layer_${item.id}_medium_${medium.id}` }}
+                {{ `layer_${item.id}_medium_${medium.id}` }} {{ medium.time }}
             </timeline-media>
         </timeline-layer-item>
 

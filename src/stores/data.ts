@@ -2,7 +2,7 @@ import { type ID, type TimeBlock } from "@/types/common";
 import type { LayerItem } from "@/types/layer";
 import type { Media } from "@/types/media";
 import { defineStore } from "pinia";
-import { computed, markRaw, ref } from "vue";
+import { computed, ref } from "vue";
 
 const layers = ref<LayerItem[]>([
   {
@@ -16,10 +16,10 @@ const layers = ref<LayerItem[]>([
           title: "medium_0",
           thumb: "",
         },
-        time: markRaw({
+        time: {
           start: 30,
           end: 90,
-        }),
+        },
         location: {
           x: 0,
           y: 0,
@@ -32,10 +32,10 @@ const layers = ref<LayerItem[]>([
           title: "medium_1",
           thumb: "",
         },
-        time: markRaw({
+        time: {
           start: 120,
-          end: 150,
-        }),
+          end: 200,
+        },
         location: {
           x: 0,
           y: 0,
