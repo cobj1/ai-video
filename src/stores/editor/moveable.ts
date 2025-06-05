@@ -1,9 +1,14 @@
 import { defineStore } from "pinia";
 import { nextTick, ref } from "vue";
-import { useDataStore } from "../data";
 import { useMouseInLayer } from "@/hooks/useMouseInLayer";
 import { useTransferLayer } from "@/hooks/useTransferLayer";
 import { useFindMediaById } from "@/hooks/useFind";
+import { useMediaLocation } from "@/hooks/useLocation";
+import { useTimelineScaleStore } from "./timeline-scale";
+import { useDataStore } from "../data";
+import { useMediaRearrange } from "@/hooks/useRearrange";
+
+const timelineScaleStore = useTimelineScaleStore();
 
 const dataStore = useDataStore();
 
@@ -38,23 +43,38 @@ const setMoveableRef = (ref: any) => (moveableRef = ref);
 
 const onDrag = (e: any) => {
   e.target.style.transform = e.transform;
+
+  const location = useMediaLocation(e.target.id);
+
+  const media = useFindMediaById(e.target.id);
+  if (media && location) {
+    const frames = media.time.end - media.time.start;
+    const start = Math.trunc(
+      location.offset.x / timelineScaleStore.getFrameWidth
+    );
+    const end = start + frames;
+
+    dataStore.setTime(media, { start, end });
+  }
 };
 
-const onDragStart = (e: any) => {
-  console.log(e, e.target.id);
-};
+const onDragStart = (e: any) => {};
 
 const onDragEnd = (e: any) => {
   const layer = useMouseInLayer(e.inputEvent);
 
   if (layer) {
-    useTransferLayer(e.target.id, layer.id);
+    if (useTransferLayer(e.target.id, layer.id)) {
+      nextTick(() => {
+        const medium = useFindMediaById(e.target.id);
 
-    nextTick(() => {
-      const medium = useFindMediaById(e.target.id);
-
-      target.value = medium.el;
-    });
+        target.value = medium.el;
+      });
+    } else {
+      useMediaRearrange(e.target.id);
+    }
+  } else {
+    useMediaRearrange(e.target.id);
   }
 };
 

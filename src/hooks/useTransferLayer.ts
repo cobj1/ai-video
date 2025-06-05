@@ -7,7 +7,7 @@ const dataStore = useDataStore();
 /**
  * 媒体转移到其他图层
  */
-export const useTransferLayer = (mediaid: ID, layerid: ID) => {
+export const useTransferLayer = (mediaid: ID, layerid: ID): boolean => {
   const mediumIndex = useFindIndexByMediaid(mediaid) as any;
 
   const layerIndex = useFindIndexByLayerid(layerid);
@@ -25,6 +25,10 @@ export const useTransferLayer = (mediaid: ID, layerid: ID) => {
         1
       );
       dataStore.layers[layerIndex].media.push(medium);
+
+      return true;
     }
   }
+
+  return false;
 };

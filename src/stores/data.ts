@@ -1,5 +1,6 @@
-import type { ID } from "@/types/common";
+import { type ID, type TimeBlock } from "@/types/common";
 import type { LayerItem } from "@/types/layer";
+import type { Media } from "@/types/media";
 import { defineStore } from "pinia";
 import { computed, markRaw, ref } from "vue";
 
@@ -15,10 +16,10 @@ const layers = ref<LayerItem[]>([
           title: "medium_0",
           thumb: "",
         },
-        time: {
-          start: 100,
-          end: 300,
-        },
+        time: markRaw({
+          start: 30,
+          end: 90,
+        }),
         location: {
           x: 0,
           y: 0,
@@ -31,10 +32,10 @@ const layers = ref<LayerItem[]>([
           title: "medium_1",
           thumb: "",
         },
-        time: {
-          start: 500,
-          end: 800,
-        },
+        time: markRaw({
+          start: 120,
+          end: 150,
+        }),
         location: {
           x: 0,
           y: 0,
@@ -59,11 +60,15 @@ const layers = ref<LayerItem[]>([
  */
 const layerEls = computed(() => layers.value.map((item) => item.el));
 
+const setTime = (media: Media, time: TimeBlock) => {
+  media.time.start = time.start;
+  media.time.end = time.end;
+};
 /**
  * 媒体重排
  */
 const mediaRearrange = () => {};
 
 export const useDataStore = defineStore("data", () => {
-  return { layers, layerEls };
+  return { layers, layerEls, setTime };
 });
