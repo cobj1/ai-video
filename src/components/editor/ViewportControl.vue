@@ -16,11 +16,9 @@
 
 <script setup lang="ts">
 import { useViewportStore } from '@/stores/editor/viewport';
-import { onMounted } from 'vue';
 
 const viewportStore = useViewportStore()
 
-onMounted(() => console.log(viewportStore.fullscreenControl))
 </script>
 
 <style scoped></style>

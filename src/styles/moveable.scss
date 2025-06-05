@@ -27,3 +27,21 @@
 .timeline .moveable-line {
   background: #eeeeee88 !important;
 }
+
+.timeline .timeline-layer-item {
+  position: relative;
+}
+
+.timeline .timeline-media {
+  position: absolute;
+  width: 200px;
+  height: 60px;
+  top: 0;
+  left: 100px;
+  line-height: 60px;
+  text-align: center;
+  background-color: #2a4a50;
+  font-weight: bold;
+  box-sizing: border-box;
+  z-index: 1;
+}

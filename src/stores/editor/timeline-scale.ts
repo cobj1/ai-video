@@ -110,7 +110,7 @@ const chunkWidth = shallowRef(25);
 /**
  * 渲染帧的宽度，每个序列帧在时间轴所占的宽度，不影响正常合成。单位 px
  */
-const getFrameWidth = () => chunkWidth.value / density.value;
+const getFrameWidth = computed(() => chunkWidth.value / density.value);
 
 /**
  * 明显的刻度，每多少块显示一个明显刻度
@@ -134,42 +134,6 @@ const getLabelByChunkIndex = (chunkIndex: number) => {
     return `${frame % frameRate.value} f`;
   }
 };
-
-/**
- * 获取一个正整数的所有正约数（因数）。
- *
- * @param {number} num 要查找约数的正整数。
- * @returns {number[]} 包含所有约数的数组，按升序排列。
- * 如果输入不是正整数，则返回空数组。
- */
-function getDivisors(num: number) {
-  // 检查输入是否为有效正整数
-  if (typeof num !== "number" || !Number.isInteger(num) || num <= 0) {
-    console.warn("输入必须是正整数。");
-    return [];
-  }
-
-  const divisors = [];
-  const limit = Math.sqrt(num); // 计算平方根，优化循环次数
-
-  for (let i = 1; i <= limit; i++) {
-    if (num % i === 0) {
-      // 如果 i 是约数
-      divisors.push(i);
-
-      // 如果 i 不是 num 的平方根，那么 num / i 也是约数
-      // 避免对于完全平方数（如 9, 16）重复添加其平方根（如 3, 4）
-      if (i * i !== num) {
-        divisors.push(num / i);
-      }
-    }
-  }
-
-  // 将约数按升序排列
-  divisors.sort((a, b) => a - b);
-
-  return divisors;
-}
 
 export const useTimelineScaleStore = defineStore("timeline-scale", () => {
   return {
