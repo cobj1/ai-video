@@ -18,5 +18,9 @@ const draggableWizardStore = useDraggableWizardStore()
     border: 4px dashed #2266;
     box-sizing: border-box;
     z-index: 3;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
 </style>

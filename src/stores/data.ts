@@ -70,6 +70,10 @@ const insertLayer = (index: number) => {
   return newLayer;
 };
 
+const insertMedia = (layerindex: number, media: Media) => {
+  layers.value[0].media.push(media);
+};
+
 export const useDataStore = defineStore("data", () => {
-  return { layers, layerEls, setTime, insertLayer };
+  return { layers, layerEls, setTime, insertLayer, insertMedia };
 });

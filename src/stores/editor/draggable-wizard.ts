@@ -3,7 +3,11 @@
  * 推拽资源时显示资源略缩图，进入时间轴变为长度
  */
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
+import { useDataStore } from "../data";
+import { v4 as uuid } from "uuid";
+import { useMoveableStore } from "./moveable";
+import { useTriggerDragStart } from "@/hooks/useElementDispatchEvent";
 
 /**
  * 精灵属性配置
@@ -76,7 +80,36 @@ const onDragend = (event: any) => {
  * 当拖拽元素进入有效的放置目标时触发。
  */
 const onDragenter = (event: any) => {
-  console.log(event)
+  const dataStore = useDataStore();
+  const moveableStore = useMoveableStore();
+
+  const media = {
+    id: uuid(),
+    el: null,
+    location: {
+      x: 0,
+      y: 0,
+    },
+    time: {
+      start: 0,
+      end: 30,
+    },
+    view: {
+      thumb: "",
+      title: "",
+    },
+  };
+  dataStore.insertMedia(0, media);
+
+  nextTick(() => {
+    moveableStore.target = media.el;
+
+    useTriggerDragStart(moveableStore.target)
+  });
+
+  target.value = null;
+
+  data.value = null;
 };
 
 /**

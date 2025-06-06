@@ -1,6 +1,7 @@
 <template>
     <v-sheet class="timeline-layer-item" :min-height="65" :height="65" width="100%">
-        <div class="timeline-layer-item-top opacity-50" :class="{ 'bg-amber': !isOutside }" ref="topRef"></div>
+        <div class="timeline-layer-item-top opacity-50" :class="{ 'bg-amber': moveableStore.dragging && !isOutside }"
+            ref="topRef"></div>
 
         <v-sheet class="timeline-layer-item-container" color="#9E9E9E10">
             <slot></slot>
@@ -12,8 +13,11 @@
 /**
  * 组件作用记录资源所在图层，资源拖拽至至此处将规划到该图层
  */
+import { useMoveableStore } from '@/stores/editor/moveable';
 import { useMouseInElement } from '@vueuse/core'
 import { useTemplateRef } from 'vue';
+
+const moveableStore = useMoveableStore()
 
 const topRef = useTemplateRef<HTMLDivElement>('topRef')
 

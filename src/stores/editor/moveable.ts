@@ -24,6 +24,11 @@ const data = ref();
  */
 const target = ref();
 
+/**
+ * 拖动中状态（Dragging）
+ */
+const dragging = ref(false);
+
 const attributes = ref({
   resizable: true,
   draggable: true,
@@ -52,11 +57,15 @@ const getMoveableRef = computed(() => moveableRef);
 
 const setMoveableRef = (ref: any) => (moveableRef = ref);
 
-const onDragStart = (e: any) => {};
+const onDragStart = (e: any) => {
+  dragging.value = true;
+};
 
 const onDrag = (e: any) => {};
 
 const onDragEnd = (e: any) => {
+  dragging.value = false;
+
   useSetMediaTime(e.target.id);
 
   const layer = useMouseInLayer(e.inputEvent);
@@ -98,7 +107,7 @@ const onRender = (e: any) => {
 };
 
 const onScroll = ({ scrollContainer, direction }: any) => {
-  scrollContainer.scrollBy(direction[0] * 10, direction[1] * 10);
+  scrollContainer.scrollBy(direction[0] * 10, direction[1] * 1);
 };
 
 const onClickMedia = (event: any, eventData: any) => {
@@ -123,6 +132,7 @@ export const useMoveableStore = defineStore("moveable", () => {
   return {
     target,
     data,
+    dragging,
     attributes,
     getMoveableRef,
     setMoveableRef,

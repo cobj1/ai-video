@@ -9,16 +9,16 @@
                 :ref="(component: any) => { if (component) { medium.el = markRaw(component.$el) } }" draggable="true"
                 @click="moveableStore.onClickMedia($event, medium)"
                 @dragstart="moveableStore.onDragStartMedia($event, medium)">
-                {{ `${medium.id}` }} {{ medium.time }}
+                <v-list-item-title> {{ `${medium.id}` }} {{ medium.time }}</v-list-item-title>
             </timeline-media>
         </timeline-layer-item>
 
         <Moveable ref="moveableRef" v-bind="moveableStore.attributes" :target="moveableStore.target"
             :elementGuidelines="['#medium_0']"
             :scrollOptions="({ container: '.timeline-layer', threshold: 30, checkScrollEvent: false, throttleTime: 0 })"
-            :bounds="{ left: 0, bottom: 0, position: 'css' }" @scroll="moveableStore.onScroll"
-            @drag="moveableStore.onDrag" @dragStart="moveableStore.onDragStart" @dragEnd="moveableStore.onDragEnd"
-            @resize="moveableStore.onResize" @render="moveableStore.onRender" />
+            :bounds="{ left: 0, top: justifyCenter ? 0 : undefined, bottom: 0, position: 'css' }"
+            @scroll="moveableStore.onScroll" @drag="moveableStore.onDrag" @dragStart="moveableStore.onDragStart"
+            @dragEnd="moveableStore.onDragEnd" @resize="moveableStore.onResize" @render="moveableStore.onRender" />
     </v-sheet>
 </template>
 
@@ -53,12 +53,9 @@ const justifyCenter = ref(true)
 
 const { height } = useElementSize(container)
 
-watch(() => props.items?.length, () => {
-    if (container.value && props.items) {
-
+watch(() => [container.value, props.items?.length], () => {
+    if (container.value && props.items && height.value) {
         justifyCenter.value = props.items.length * 65 < height.value
-
-        console.log(props.items.length * 65, height.value)
     }
 }, {
     immediate: true
