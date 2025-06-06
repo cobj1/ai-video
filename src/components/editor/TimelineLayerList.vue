@@ -1,6 +1,6 @@
 <template>
-    <v-sheet class="timeline-layer position-relative d-flex flex-column-reverse justify-center" height="100%"
-        :width="timelineScaleStore.width">
+    <v-sheet ref="container" class="timeline-layer position-relative d-flex flex-column-reverse overflow-y-auto"
+        :class="{ 'justify-center': justifyCenter }" height="100%" :width="timelineScaleStore.width">
         <timeline-layer-item v-for="item in items" :key="item.id" :id="item.id"
             :ref="(component: any) => { if (component) { item.el = markRaw(component.$el) } }">
             <timeline-media class="timeline-media"
@@ -9,12 +9,14 @@
                 :ref="(component: any) => { if (component) { medium.el = markRaw(component.$el) } }" draggable="true"
                 @click="moveableStore.onClickMedia($event, medium)"
                 @dragstart="moveableStore.onDragStartMedia($event, medium)">
-                {{ `layer_${item.id}_medium_${medium.id}` }} {{ medium.time }}
+                {{ `${medium.id}` }} {{ medium.time }}
             </timeline-media>
         </timeline-layer-item>
 
         <Moveable ref="moveableRef" v-bind="moveableStore.attributes" :target="moveableStore.target"
-            :elementGuidelines="['#medium_0']" :bounds="{ left: 0, top: 0, right: 0, bottom: 0, position: 'css' }"
+            :elementGuidelines="['#medium_0']"
+            :scrollOptions="({ container: '.timeline-layer', threshold: 30, checkScrollEvent: false, throttleTime: 0 })"
+            :bounds="{ left: 0, bottom: 0, position: 'css' }" @scroll="moveableStore.onScroll"
             @drag="moveableStore.onDrag" @dragStart="moveableStore.onDragStart" @dragEnd="moveableStore.onDragEnd"
             @resize="moveableStore.onResize" @render="moveableStore.onRender" />
     </v-sheet>
@@ -27,8 +29,15 @@
 import Moveable from "vue3-moveable";
 import '@/styles/moveable.scss'
 import { useTimelineScaleStore } from '@/stores/editor/timeline-scale';
-import { markRaw, ref } from "vue";
+import { markRaw, ref, watch } from "vue";
 import { useMoveableStore } from "@/stores/editor/moveable";
+import { useElementSize } from '@vueuse/core'
+
+const props = defineProps({
+    items: {
+        type: Object
+    }
+})
 
 const timelineScaleStore = useTimelineScaleStore()
 
@@ -38,10 +47,21 @@ const moveableRef = ref()
 
 moveableStore.setMoveableRef(moveableRef)
 
-defineProps({
-    items: {
-        type: Object
+const container = ref()
+
+const justifyCenter = ref(true)
+
+const { height } = useElementSize(container)
+
+watch(() => props.items?.length, () => {
+    if (container.value && props.items) {
+
+        justifyCenter.value = props.items.length * 65 < height.value
+
+        console.log(props.items.length * 65, height.value)
     }
+}, {
+    immediate: true
 })
 
 </script>

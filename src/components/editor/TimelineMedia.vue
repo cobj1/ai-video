@@ -1,8 +1,9 @@
 <template>
     <div>
-        <slot></slot>
+        <div style="pointer-events: none;">
+            <slot></slot>
+        </div>
     </div>
-
 </template>
 
 <script setup lang="ts">

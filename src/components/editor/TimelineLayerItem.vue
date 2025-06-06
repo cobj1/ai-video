@@ -1,6 +1,7 @@
 <template>
-    <v-sheet class="timeline-layer-item" :height="65" width="100%">
-        <div class="timeline-layer-item-top"></div>
+    <v-sheet class="timeline-layer-item" :min-height="65" :height="65" width="100%">
+        <div class="timeline-layer-item-top opacity-50" :class="{ 'bg-amber': !isOutside }" ref="topRef"></div>
+
         <v-sheet class="timeline-layer-item-container" color="#9E9E9E10">
             <slot></slot>
         </v-sheet>
@@ -11,7 +12,12 @@
 /**
  * 组件作用记录资源所在图层，资源拖拽至至此处将规划到该图层
  */
+import { useMouseInElement } from '@vueuse/core'
+import { useTemplateRef } from 'vue';
 
+const topRef = useTemplateRef<HTMLDivElement>('topRef')
+
+const { isOutside } = useMouseInElement(topRef)
 
 </script>
 

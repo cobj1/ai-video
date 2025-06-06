@@ -21,8 +21,8 @@ export const useFindIndexByMediaid = (mediaid: ID) => {
 /**
  * 通过 id 获取图层所在的位置
  */
-export const useFindIndexByLayerid = (layerid: ID) => {
-  let index = null;
+export const useFindIndexByLayerid = (layerid: ID): number => {
+  let index = 0;
 
   dataStore.layers.forEach((layer, layerIndex) => {
     if (layer.id == layerid) index = layerIndex;

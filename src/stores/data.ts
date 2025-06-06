@@ -3,14 +3,15 @@ import type { LayerItem } from "@/types/layer";
 import type { Media } from "@/types/media";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { v4 as uuid } from "uuid";
 
 const layers = ref<LayerItem[]>([
   {
-    id: 0,
+    id: uuid(),
     el: null,
     media: [
       {
-        id: `medium_0`,
+        id: uuid(),
         el: null,
         view: {
           title: "medium_0",
@@ -26,7 +27,7 @@ const layers = ref<LayerItem[]>([
         },
       },
       {
-        id: `medium_1`,
+        id: uuid(),
         el: null,
         view: {
           title: "medium_1",
@@ -43,16 +44,12 @@ const layers = ref<LayerItem[]>([
       },
     ],
   },
-  {
-    id: 1,
-    el: null,
-    media: [],
-  },
-  {
-    id: 2,
-    el: null,
-    media: [],
-  },
+  // { id: uuid(), el: null, media: [] },
+  // { id: uuid(), el: null, media: [] },
+  // { id: uuid(), el: null, media: [] },
+  // { id: uuid(), el: null, media: [] },
+  // { id: uuid(), el: null, media: [] },
+  // { id: uuid(), el: null, media: [] },
 ]);
 
 /**
@@ -64,11 +61,15 @@ const setTime = (media: Media, time: TimeBlock) => {
   media.time.start = time.start;
   media.time.end = time.end;
 };
-/**
- * 媒体重排
- */
-const mediaRearrange = () => {};
+
+const insertLayer = (index: number) => {
+  const newLayer = { id: uuid(), el: null, media: [] };
+
+  layers.value.splice(index, 0, newLayer);
+
+  return newLayer;
+};
 
 export const useDataStore = defineStore("data", () => {
-  return { layers, layerEls, setTime };
+  return { layers, layerEls, setTime, insertLayer };
 });

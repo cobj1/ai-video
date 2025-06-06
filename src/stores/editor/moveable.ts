@@ -7,6 +7,8 @@ import { useDataStore } from "../data";
 import { useMediaOrigin } from "@/hooks/useRearrange";
 import { useSetMediaTime } from "@/hooks/useSetMediaTime";
 import { useMediaFocus } from "@/hooks/useMediaFocus";
+import { useMouseInLayerTop } from "@/hooks/useMouseInLayerTop";
+import { useFindIndexByLayerid } from "@/hooks/useFind";
 
 const timelineScaleStore = useTimelineScaleStore();
 
@@ -23,13 +25,20 @@ const data = ref();
 const target = ref();
 
 const attributes = ref({
+  resizable: true,
   draggable: true,
-  throttleDrag: 1,
+  scrollable: true,
+  keepRatio: false,
   edgeDraggable: false,
+  throttleDrag: 1,
   startDragRotate: 0,
   throttleDragRotate: 0,
-  resizable: true,
-  keepRatio: false,
+  // scrollOptions: {
+  //   container: ".timeline-layer",
+  //   threshold: 30,
+  //   checkScrollEvent: false,
+  //   throttleTime: 0,
+  // },
   snappable: true,
   snapDirections: { left: true, right: true },
   elementSnapDirections: { left: true, right: true },
@@ -43,16 +52,29 @@ const getMoveableRef = computed(() => moveableRef);
 
 const setMoveableRef = (ref: any) => (moveableRef = ref);
 
-const onDrag = (e: any) => {};
-
 const onDragStart = (e: any) => {};
+
+const onDrag = (e: any) => {};
 
 const onDragEnd = (e: any) => {
   useSetMediaTime(e.target.id);
 
   const layer = useMouseInLayer(e.inputEvent);
 
-  if (layer) {
+  const layerTop = useMouseInLayerTop(e.inputEvent);
+
+  // 鼠标放置在图层顶部处理区域
+  if (layerTop) {
+    const index = useFindIndexByLayerid(layerTop.id);
+
+    const newLayer = dataStore.insertLayer(index + 1);
+
+    if (useTransferLayer(e.target.id, newLayer.id)) {
+      useMediaFocus(e.target.id);
+    } else {
+      useMediaOrigin(e.target.id);
+    }
+  } else if (layer) {
     /* 资源更换图层 */
     if (useTransferLayer(e.target.id, layer.id)) {
       useMediaFocus(e.target.id);
@@ -75,6 +97,10 @@ const onRender = (e: any) => {
   e.target.style.cssText += e.cssText;
 };
 
+const onScroll = ({ scrollContainer, direction }: any) => {
+  scrollContainer.scrollBy(direction[0] * 10, direction[1] * 10);
+};
+
 const onClickMedia = (event: any, eventData: any) => {
   target.value = event.target;
 
@@ -86,9 +112,7 @@ const onDragStartMedia = (event: any, eventData: any) => {
 
   event.preventDefault();
 
-  moveable.waitToChangeTarget().then(() => {
-    moveable.dragStart(event);
-  });
+  moveable.waitToChangeTarget().then(() => moveable.dragStart(event));
 
   target.value = event.target;
 
@@ -107,6 +131,7 @@ export const useMoveableStore = defineStore("moveable", () => {
     onDragEnd,
     onResize,
     onRender,
+    onScroll,
     onClickMedia,
     onDragStartMedia,
   };
