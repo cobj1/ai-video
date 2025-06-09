@@ -12,13 +12,16 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@ffmpeg/core": "^0.12.10",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "@fontsource/roboto": "5.2.5",
     "@mdi/font": "7.4.47",
+    "@types/file-saver": "^2.0.7",
     "@vueuse/core": "^13.2.0",
+    "@zip.js/zip.js": "^2.7.62",
     "etro": "^0.12.1",
-    "gsap": "^3.13.0",
+    "file-saver": "^2.0.5",
     "install": "^0.13.0",
     "pinia": "^3.0.2",
     "pinia-plugin-persistedstate": "^4.3.0",

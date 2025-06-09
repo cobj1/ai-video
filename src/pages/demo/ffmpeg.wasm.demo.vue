@@ -8,16 +8,20 @@
 
         <v-btn class="mt-4" width="100%" text="将视频转换为图片" @click="toImages()"></v-btn>
 
+        <v-btn class="mt-4" width="100%" text="将图片压缩到zip" @click="images2zip()"></v-btn>
+
     </v-container>
 </template>
 
 <script lang="ts" setup>
 import { useFooterStore } from '@/stores/footer';
-import type { LogEvent } from '@ffmpeg/ffmpeg'
+import type { FSNode, LogEvent } from '@ffmpeg/ffmpeg'
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import { onMounted, ref, shallowRef } from 'vue'
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
+import { BlobReader, BlobWriter, ZipWriter } from '@zip.js/zip.js'
+import { saveAs } from 'file-saver'
 
 const ffmpeg = new FFmpeg()
 
@@ -45,24 +49,52 @@ const toImages = async () => {
     try {
         footerStore.message = 'Start video to images'
 
-        await ffmpeg.writeFile('video.webm', await fetchFile(file.value))
+        await ffmpeg.writeFile('video.mp4', await fetchFile(file.value))
 
         await ffmpeg.createDir('out')
 
-        ffmpeg.exec(["-i", "video.webm", "-vf", "fps=1,scale=640:360", "output_%04d.png"]);
+        ffmpeg.exec(["-i", "video.mp4", "-vf", "fps=30,scale=320:180", "out/%04d.jpg"]);
 
         footerStore.message = 'Complete video to images'
 
-        const result = await ffmpeg.listDir('/')
+        const result = await ffmpeg.listDir('/out')
 
         console.log(result)
+    } catch (e) {
+        console.log(e)
+    }
+}
 
+const images2zip = async () => {
+    try {
+        const zipWriter = new ZipWriter(new BlobWriter("application/zip"));
+
+        const result = await ffmpeg.listDir('/out') as FSNode[]
+
+        for (let index = 0; index < result.length; index++) {
+            const element = result[index];
+
+            if (!element.isDir) {
+                const data = await ffmpeg.readFile(`/out/${element.name}`)
+
+                const blob = new Blob([data], { type: 'image/png' });
+
+                const blobReader = new BlobReader(blob)
+
+                zipWriter.add(element.name, blobReader)
+            }
+        }
+        const zipFileBlob = await zipWriter.close();
+
+        console.log(zipFileBlob)
+        saveAs(zipFileBlob, "file.zip")
     } catch (e) {
         console.log(e)
     }
 }
 
 const load = async () => {
+
     const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm'
 
     footerStore.message = 'Loading Core'
@@ -73,7 +105,6 @@ const load = async () => {
     await ffmpeg.load({
         coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
         wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-        workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript')
     })
 
     footerStore.message = 'Loaded Core'

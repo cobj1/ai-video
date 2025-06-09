@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 import { shallowRef } from "vue";
-import Human from "@/pages/editor/assets/human.vue";
-import Image from "@/pages/editor/assets/image.vue";
-import Movie from "@/pages/editor/assets/movie.vue";
-import MovieFX from "@/pages/editor/assets/movie-fx.vue";
-import Text from "@/pages/editor/assets/text.vue";
-import Subtitle from "@/pages/editor/assets/subtitle.vue";
-import History from "@/pages/editor/assets/history.vue";
+import Human from "@/components/assets/human.vue";
+import Image from "@/components/assets/image.vue";
+import Movie from "@/components/assets/movie.vue";
+import MovieFX from "@/components/assets/movie-fx.vue";
+import Text from "@/components/assets/text.vue";
+import Subtitle from "@/components/assets/subtitle.vue";
+import History from "@/components/assets/history.vue";
 
 export const useAssetsStore = defineStore("assets", () => {
   const view = shallowRef(Movie);
