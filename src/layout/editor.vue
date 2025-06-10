@@ -103,7 +103,7 @@
 
         <v-main>
             <div class="h-100 overflow-auto">
-                <RouterView></RouterView>
+               <slot></slot>
             </div>
         </v-main>
 

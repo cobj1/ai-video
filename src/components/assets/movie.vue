@@ -1,9 +1,13 @@
 <template>
     <v-container fluid>
         <section class="h-100 d-flex flex-column ">
-            <h3 class="flex-0-0	 text-subtitle-1 font-weight-bold mb-4 d-flex justify-space-between align-center">
-                Movie Assets
-
+            <h3 class="flex-0-0	 text-subtitle-1 font-weight-bold d-flex justify-space-between align-center">
+                <v-breadcrumbs :items="['Movie']">
+                    <template v-slot:prepend>
+                        <v-icon class="mr-2" icon="mdi-movie-play-outline"></v-icon>
+                    </template>
+                </v-breadcrumbs>
+                
                 <div class="d-flex ga-2">
                     <v-btn border class="text-none" prepend-icon="mdi-upload" rounded="lg" slim
                         text="Upload local files" variant="text" />
@@ -43,29 +47,7 @@
                 </v-tabs-window-item>
 
                 <v-tabs-window-item value="two">
-                    <v-row>
-                        <v-col v-for="(item, i) in items" :key="i" cols="12" md="6" sm="12">
-                            <draggable-source-container :data='{
-                                title: "Pre-fab homes",
-                                cover: "http://localhost:3000/src/assets/demo-1.png",
-                            }'>
-                                <v-card class="mx-auto" flat height="300" :image="item.img" link :ripple="false"
-                                    rounded="lg">
-                                    <template #image>
-                                        <v-img cover
-                                            gradient="to bottom, rgba(var(--v-theme-surface), .1), rgba(var(--v-theme-surface), 1)" />
-                                    </template>
-
-                                    <p class="text-body-1 font-weight-bold position-absolute right-0 bottom-0 pa-4">
-                                        {{ item.title }}
-                                    </p>
-                                </v-card>
-                            </draggable-source-container>
-
-                            <v-btn block class="text-none mt-2" color="surface-light" :ripple="false" rounded="lg"
-                                text="Add to Timeline" variant="flat" />
-                        </v-col>
-                    </v-row>
+                     
                 </v-tabs-window-item>
             </v-tabs-window>
         </section>
