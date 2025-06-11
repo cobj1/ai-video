@@ -1,66 +1,45 @@
 <template>
-    <v-sheet ref="container" class="timeline-layer position-relative d-flex flex-column-reverse overflow-y-auto"
-        :class="{ 'justify-center': justifyCenter }" height="100%" :width="timelineScaleStore.width">
-        <timeline-layer-item v-for="item in items" :key="item.id" :id="item.id"
-            :ref="(component: any) => { if (component) { item.el = markRaw(component.$el) } }">
-            <timeline-clip
-                :style="{ 'left': `${medium.time.start * timelineScaleStore.getFrameWidth}px`, 'width': `${medium.time.end * timelineScaleStore.getFrameWidth - medium.time.start * timelineScaleStore.getFrameWidth}px` }"
-                :medium="medium" v-for="medium in item.media" :key="medium.id" :id="medium.id"
-                :ref="(component: any) => { if (component) { medium.el = markRaw(component.$el) } }" draggable="true"
-                @click="moveableStore.onClickMedia($event, medium)"
-                @dragstart="moveableStore.onDragStartMedia($event, medium)">
-                <v-list-item-title> {{ `${medium.id}` }} {{ medium.time }}</v-list-item-title>
-            </timeline-clip>
-        </timeline-layer-item>
+    <v-sheet class="timeline-track" :min-height="65" :height="65" width="100%">
+        <div class="timeline-track-top opacity-50" :class="{ 'bg-amber': moveableStore.dragging && !isOutside }"
+            ref="topRef"></div>
 
-        <Moveable ref="moveableRef" v-bind="moveableStore.attributes" :target="moveableStore.target"
-            :elementGuidelines="['#medium_0']"
-            :scrollOptions="({ container: '.timeline-layer', threshold: 30, checkScrollEvent: false, throttleTime: 0 })"
-            :bounds="{ left: 0, top: justifyCenter ? 0 : undefined, bottom: 0, position: 'css' }"
-            @scroll="moveableStore.onScroll" @drag="moveableStore.onDrag" @dragStart="moveableStore.onDragStart"
-            @dragEnd="moveableStore.onDragEnd" @resize="moveableStore.onResize" @render="moveableStore.onRender" />
+        <v-sheet class="timeline-track-container" color="#9E9E9E10">
+            <slot></slot>
+        </v-sheet>
     </v-sheet>
 </template>
 
 <script setup lang="ts">
 /**
- * 组件用于层级中资源交互，显示各个图层
+ * 组件作用记录资源所在图层，资源拖拽至至此处将规划到该图层
  */
-import Moveable from "vue3-moveable";
-import '@/styles/moveable.scss'
-import { useTimelineScaleStore } from '@/stores/editor/timeline-scale';
-import { markRaw, ref, watch } from "vue";
-import { useMoveableStore } from "@/stores/editor/moveable";
-import { useElementSize } from '@vueuse/core'
-
-const props = defineProps({
-    items: {
-        type: Object
-    }
-})
-
-const timelineScaleStore = useTimelineScaleStore()
+import { useMoveableStore } from '@/stores/moveable';
+import { useMouseInElement } from '@vueuse/core'
+import { useTemplateRef } from 'vue';
 
 const moveableStore = useMoveableStore()
 
-const moveableRef = ref()
+const topRef = useTemplateRef<HTMLDivElement>('topRef')
 
-moveableStore.setMoveableRef(moveableRef)
-
-const container = ref()
-
-const justifyCenter = ref(true)
-
-const { height } = useElementSize(container)
-
-watch(() => [container.value, props.items?.length], () => {
-    if (container.value && props.items && height.value) {
-        justifyCenter.value = props.items.length * 65 < height.value
-    }
-}, {
-    immediate: true
-})
+const { isOutside } = useMouseInElement(topRef)
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.timeline-track {
+    display: flex;
+    flex-direction: column;
+}
+
+.timeline-track-top {
+    width: 100%;
+    height: 5px;
+    flex-shrink: 0;
+}
+
+.timeline-track-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+</style>

@@ -16,7 +16,7 @@
 /**
  * 拖拽精灵，实例数据委托给 draggableWizardStore
  */
-import { useDraggableWizardStore } from '@/stores/editor/draggable-wizard'
+import { useDraggableWizardStore } from '@/stores/draggable-wizard'
 import { ref } from 'vue'
 
 const draggableWizardStore = useDraggableWizardStore()

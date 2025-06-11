@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDraggableWizardStore } from '@/stores/editor/draggable-wizard';
+import { useDraggableWizardStore } from '@/stores/draggable-wizard';
 
 const draggableWizardStore = useDraggableWizardStore()
 

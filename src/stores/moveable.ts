@@ -1,18 +1,17 @@
 import { defineStore } from "pinia";
-import { computed, nextTick, ref } from "vue";
-import { useMouseInLayer } from "@/hooks/useMouseInLayer";
-import { useTransferLayer } from "@/hooks/useTransferLayer";
-import { useTimelineScaleStore } from "./timeline-scale";
-import { useDataStore } from "../data";
-import { useMediaOrigin } from "@/hooks/useRearrange";
-import { useSetMediaTime } from "@/hooks/useSetMediaTime";
-import { useMediaFocus } from "@/hooks/useMediaFocus";
-import { useMouseInLayerTop } from "@/hooks/useMouseInLayerTop";
-import { useFindIndexByLayerid } from "@/hooks/useFind";
+import { computed, ref } from "vue";
+import {
+  useMouseInTrack,
+  useMouseInTrackTop,
+  useUpdateClipStartFrame,
+  useFindTrackindexByTrackid,
+  useTransferTrack,
+  useClipFocus,
+  useClipOrigin,
+} from "@/composables/useTimeline";
+import { useTimelineStore } from "@/stores/timeline";
 
-const timelineScaleStore = useTimelineScaleStore();
-
-const dataStore = useDataStore();
+const timelineStore = useTimelineStore();
 
 /**
  * 选中的数据
@@ -39,7 +38,7 @@ const attributes = ref({
   startDragRotate: 0,
   throttleDragRotate: 0,
   // scrollOptions: {
-  //   container: ".timeline-layer",
+  //   container: ".timeline-track",
   //   threshold: 30,
   //   checkScrollEvent: false,
   //   throttleTime: 0,
@@ -66,32 +65,36 @@ const onDrag = (e: any) => {};
 const onDragEnd = (e: any) => {
   dragging.value = false;
 
-  useSetMediaTime(e.target.id);
+  useUpdateClipStartFrame(e.target.id);
 
-  const layer = useMouseInLayer(e.inputEvent);
+  const track = useMouseInTrack(e.inputEvent);
 
-  const layerTop = useMouseInLayerTop(e.inputEvent);
+  const trackTop = useMouseInTrackTop(e.inputEvent);
 
   // 鼠标放置在图层顶部处理区域
-  if (layerTop) {
-    const index = useFindIndexByLayerid(layerTop.id);
+  if (trackTop) {
+    const index = useFindTrackindexByTrackid(trackTop.id);
 
-    const newLayer = dataStore.insertLayer(index + 1);
+    const newTrack = timelineStore.insertTrack(
+      index + 1,
+      "video",
+      `新视频轨道 ${index + 1}`
+    );
 
-    if (useTransferLayer(e.target.id, newLayer.id)) {
-      useMediaFocus(e.target.id);
+    if (useTransferTrack(e.target.id, newTrack.id)) {
+      useClipFocus(e.target.id);
     } else {
-      useMediaOrigin(e.target.id);
+      useClipOrigin(e.target.id);
     }
-  } else if (layer) {
+  } else if (track) {
     /* 资源更换图层 */
-    if (useTransferLayer(e.target.id, layer.id)) {
-      useMediaFocus(e.target.id);
+    if (useTransferTrack(e.target.id, track.id)) {
+      useClipFocus(e.target.id);
     } else {
-      useMediaOrigin(e.target.id);
+      useClipOrigin(e.target.id);
     }
   } else {
-    useMediaOrigin(e.target.id);
+    useClipOrigin(e.target.id);
   }
 };
 
@@ -110,13 +113,13 @@ const onScroll = ({ scrollContainer, direction }: any) => {
   scrollContainer.scrollBy(direction[0] * 10, direction[1] * 1);
 };
 
-const onClickMedia = (event: any, eventData: any) => {
+const onClickClip = (event: any, eventData: any) => {
   target.value = event.target;
 
   data.value = eventData;
 };
 
-const onDragStartMedia = (event: any, eventData: any) => {
+const onDragStartClip = (event: any, eventData: any) => {
   const moveable = moveableRef.value;
 
   event.preventDefault();
@@ -142,7 +145,7 @@ export const useMoveableStore = defineStore("moveable", () => {
     onResize,
     onRender,
     onScroll,
-    onClickMedia,
-    onDragStartMedia,
+    onClickClip,
+    onDragStartClip,
   };
 });

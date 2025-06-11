@@ -4,10 +4,12 @@
  */
 import { defineStore } from "pinia";
 import { nextTick, ref } from "vue";
-import { useDataStore } from "../data";
+import { useDataStore } from "./data";
 import { v4 as uuid } from "uuid";
 import { useMoveableStore } from "./moveable";
-import { useTriggerDragStart } from "@/hooks/useElementDispatchEvent";
+import { useTriggerDragStart } from "@/composables/useElement";
+import { useTimelineStore } from "./timeline";
+import type { Clip } from "@/types/timeline";
 
 /**
  * 精灵属性配置
@@ -80,31 +82,22 @@ const onDragend = (event: any) => {
  * 当拖拽元素进入有效的放置目标时触发。
  */
 const onDragenter = (event: any) => {
-  const dataStore = useDataStore();
+  const timelineStore = useTimelineStore();
   const moveableStore = useMoveableStore();
 
-  const media = {
-    id: uuid(),
-    el: null,
-    location: {
-      x: 0,
-      y: 0,
-    },
-    time: {
-      start: 0,
-      end: 30,
-    },
-    view: {
-      thumb: "",
-      title: "",
-    },
-  };
-  dataStore.insertMedia(0, media);
+  const clip = {
+    mediaType: "video",
+    name: "video@123",
+    startFrame: 10,
+    durationFrames: 30,
+    mediaSourcePath: "",
+  } as Clip;
+  timelineStore.addClip("", clip);
 
   nextTick(() => {
-    moveableStore.target = media.el;
+    moveableStore.target = clip.el;
 
-    useTriggerDragStart(moveableStore.target)
+    useTriggerDragStart(moveableStore.target);
   });
 
   target.value = null;

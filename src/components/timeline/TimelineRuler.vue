@@ -1,5 +1,5 @@
 <template>
-    <div ref="timelineRulerRef" class="timeline-ruler" :style="{ width: totalTimelineWidth + 'px' }"
+    <div ref="timelineRulerRef" class="timeline-ruler" :style="{ width: timelineStore.totalTimelineWidth + 'px' }"
         @wheel="handleMouseWheel">
         <div class="ruler-marks-container">
             <div v-for="mark in visibleRulerMarks" :key="mark.frame"
@@ -24,12 +24,6 @@ const timelineRulerRef = shallowRef<HTMLElement | null>(null);
 const parentEl = useParentElement(timelineRulerRef)
 const { width: wrapperWidth } = useElementSize(parentEl);
 const parentElScrollLeft = ref(0)
-
-
-// 计算时间轴的总像素宽度
-const totalTimelineWidth = computed(() => {
-    return timelineStore.contentDurationFrames * timelineStore.pixelsPerFrame;
-});
 
 
 // --- 鼠标滚轮缩放 ---
@@ -166,7 +160,7 @@ const handleScroll = () => {
     // 简单触发刻度线重新计算，因为其依赖的 scrollLeft 变了
     // 理想情况下，scrollLeft 应该也是一个响应式变量，这样 visibleRulerMarks 会自动响应
     // 但目前这种调用 store setter 的方式也能触发更新
-    timelineStore.setPixelsPerFrame(timelineStore.pixelsPerFrame);
+    // timelineStore.setPixelsPerFrame(timelineStore.pixelsPerFrame);
 
     parentElScrollLeft.value = parentEl.value?.scrollLeft || 0
 };
