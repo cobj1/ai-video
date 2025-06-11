@@ -3,14 +3,14 @@
         :class="{ 'justify-center': justifyCenter }" height="100%" :width="timelineScaleStore.width">
         <timeline-layer-item v-for="item in items" :key="item.id" :id="item.id"
             :ref="(component: any) => { if (component) { item.el = markRaw(component.$el) } }">
-            <timeline-media class="timeline-media"
+            <timeline-clip
                 :style="{ 'left': `${medium.time.start * timelineScaleStore.getFrameWidth}px`, 'width': `${medium.time.end * timelineScaleStore.getFrameWidth - medium.time.start * timelineScaleStore.getFrameWidth}px` }"
                 :medium="medium" v-for="medium in item.media" :key="medium.id" :id="medium.id"
                 :ref="(component: any) => { if (component) { medium.el = markRaw(component.$el) } }" draggable="true"
                 @click="moveableStore.onClickMedia($event, medium)"
                 @dragstart="moveableStore.onDragStartMedia($event, medium)">
                 <v-list-item-title> {{ `${medium.id}` }} {{ medium.time }}</v-list-item-title>
-            </timeline-media>
+            </timeline-clip>
         </timeline-layer-item>
 
         <Moveable ref="moveableRef" v-bind="moveableStore.attributes" :target="moveableStore.target"

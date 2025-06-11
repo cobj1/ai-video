@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="timeline-clip">
         <div style="pointer-events: none;">
             <slot></slot>
         </div>

@@ -1,13 +1,13 @@
 <template>
     <div class="timeline h-100 d-flex flex-column position-relative">
-        <timeline-tool></timeline-tool>
+        <timeline-controls></timeline-controls>
         <div class="d-flex h-100 overflow-hidden">
             <div class="h-100" style="min-width: 200px;">
                 <timeline-layer-control></timeline-layer-control>
             </div>
             <div class="h-100 w-100 overflow-x-auto d-flex flex-column">
-                <timeline-scale class="mt-1 flex-grow-0	"></timeline-scale>
-                <timeline-layer-list :items="dataStore.layers"></timeline-layer-list>
+                <timeline-ruler class="mt-1 flex-grow-0"></timeline-ruler>
+                <timeline-track :items="dataStore.layers"></timeline-track>
             </div>
         </div>
         <draggable-target-container v-if="draggableWizardStore.target"></draggable-target-container>
