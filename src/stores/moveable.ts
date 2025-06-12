@@ -37,12 +37,6 @@ const attributes = ref({
   throttleDrag: 1,
   startDragRotate: 0,
   throttleDragRotate: 0,
-  // scrollOptions: {
-  //   container: ".timeline-track",
-  //   threshold: 30,
-  //   checkScrollEvent: false,
-  //   throttleTime: 0,
-  // },
   snappable: true,
   snapDirections: { left: true, right: true },
   elementSnapDirections: { left: true, right: true },
@@ -55,6 +49,23 @@ let moveableRef = ref();
 const getMoveableRef = computed(() => moveableRef);
 
 const setMoveableRef = (ref: any) => (moveableRef = ref);
+
+/**
+ * Moveable 的额外属性，例如 elementGuidelines
+ */
+
+const elementGuidelines = computed<HTMLElement[]>(() => {
+  const clipElements: HTMLElement[] = [];
+  timelineStore.tracks.forEach((track) => {
+    track.clips.forEach((clip) => {
+      if (clip.el && clip.el != target.value) {
+        // 确保 clip.el 存在且不是当前选中的元素
+        clipElements.push(clip.el);
+      }
+    });
+  });
+  return clipElements;
+});
 
 const onDragStart = (e: any) => {
   dragging.value = true;
@@ -137,6 +148,7 @@ export const useMoveableStore = defineStore("moveable", () => {
     data,
     dragging,
     attributes,
+    elementGuidelines,
     getMoveableRef,
     setMoveableRef,
     onDrag,

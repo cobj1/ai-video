@@ -28,7 +28,7 @@
                         <v-col v-for="(item, i) in items" :key="i" cols="12" md="6" sm="12">
                             <draggable-source-container :data='{
                                 title: item.title,
-                                cover: item.img,
+                                thumb: item.img,
                             }'>
                                 <v-card class="mx-auto" flat min-height="200" :image="item.img" link :ripple="false"
                                     rounded="lg">

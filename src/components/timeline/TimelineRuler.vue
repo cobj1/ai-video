@@ -1,6 +1,5 @@
 <template>
-    <div ref="timelineRulerRef" class="timeline-ruler" :style="{ width: timelineStore.totalTimelineWidth + 'px' }"
-        @wheel="handleMouseWheel">
+    <div class="timeline-ruler overflow-hidden" :style="{ width: timelineStore.totalTimelineWidth + 'px' }" @wheel="handleMouseWheel">
         <div class="ruler-marks-container">
             <div v-for="mark in visibleRulerMarks" :key="mark.frame"
                 :style="{ left: (mark.frame * timelineStore.pixelsPerFrame) + 'px' }"
@@ -12,17 +11,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, shallowRef } from 'vue';
+import { ref, computed, onMounted, onUnmounted, shallowRef, watch } from 'vue';
 import { useTimelineStore } from '@/stores/timeline';
-import { useElementSize, useParentElement } from '@vueuse/core';
+import { useElementSize } from '@vueuse/core';
+
+const props = defineProps<{
+    scrollContainer: HTMLElement | null; // 接收滚动容器的引用
+}>();
 
 const timelineStore = useTimelineStore();
 
+// 使用传入的 scrollContainer 作为父元素
+const scrollParentEl = computed(() => props.scrollContainer);
 
-// 可滚动容器的引用和宽度
-const timelineRulerRef = shallowRef<HTMLElement | null>(null);
-const parentEl = useParentElement(timelineRulerRef)
-const { width: wrapperWidth } = useElementSize(parentEl);
+// 监听滚动容器的宽度
+const { width: wrapperWidth } = useElementSize(scrollParentEl);
+
+// 存储滚动容器的 scrollLeft
 const parentElScrollLeft = ref(0)
 
 
@@ -32,13 +37,14 @@ const handleMouseWheel = (e: WheelEvent) => {
 
     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1; // 向上滚放大，向下滚缩小
 
-    // 计算鼠标位置对应的帧数，用于“缩放到鼠标位置”
-    const timelineEl = timelineRulerRef.value;
-    if (!timelineEl) return;
+    const parentScrollEl = scrollParentEl.value; // 使用统一的滚动容器
+    if (!parentScrollEl) return;
 
-    const rect = timelineEl.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left; // 鼠标在容器内的X坐标
-    const scrollLeft = timelineEl.scrollLeft; // 当前滚动位置
+    const rect = parentScrollEl.getBoundingClientRect();
+
+    const mouseX = e.clientX - rect.left; // 鼠标在 rulerWrapper 内的X坐标
+
+    const scrollLeft = parentScrollEl.scrollLeft; // 从父元素获取滚动位置
 
     const frameAtMouse = (scrollLeft + mouseX) / timelineStore.pixelsPerFrame;
 
@@ -50,7 +56,7 @@ const handleMouseWheel = (e: WheelEvent) => {
 
     // 使用 requestAnimationFrame 确保在下一帧渲染前设置滚动位置
     requestAnimationFrame(() => {
-        timelineEl.scrollLeft = newScrollLeft;
+        parentScrollEl.scrollLeft = newScrollLeft; // 更新父元素的滚动位置
     });
 };
 
@@ -155,25 +161,39 @@ const formatMarkLabel = (frame: number, level: RulerMark['level']) => {
     }
 };
 
-// 监听滚动事件，确保刻度线重新计算
+// 监听父容器的滚动，更新 parentElScrollLeft
 const handleScroll = () => {
-    // 简单触发刻度线重新计算，因为其依赖的 scrollLeft 变了
-    // 理想情况下，scrollLeft 应该也是一个响应式变量，这样 visibleRulerMarks 会自动响应
-    // 但目前这种调用 store setter 的方式也能触发更新
-    // timelineStore.setPixelsPerFrame(timelineStore.pixelsPerFrame);
-
-    parentElScrollLeft.value = parentEl.value?.scrollLeft || 0
+    if (scrollParentEl.value) {
+        parentElScrollLeft.value = scrollParentEl.value.scrollLeft;
+    }
 };
 
 onMounted(() => {
-    parentEl.value?.addEventListener('scroll', handleScroll);
+    if (scrollParentEl.value) {
+        scrollParentEl.value.addEventListener('scroll', handleScroll);
+        // 初始化时设置一次滚动位置
+        parentElScrollLeft.value = scrollParentEl.value.scrollLeft;
+    }
     // 初始化时间轴内容，例如设置总帧数和帧率
     timelineStore.setContentDuration(1000); // 示例：总共 1000 帧
     timelineStore.setFrameRate(30);       // 示例：30 FPS
 });
 
 onUnmounted(() => {
-    parentEl.value?.removeEventListener('scroll', handleScroll);
+    if (scrollParentEl.value) {
+        scrollParentEl.value.removeEventListener('scroll', handleScroll);
+    }
+});
+
+// 当 scrollContainer prop 变化时，重新绑定事件监听器
+watch(() => props.scrollContainer, (newContainer, oldContainer) => {
+    if (oldContainer) {
+        oldContainer.removeEventListener('scroll', handleScroll);
+    }
+    if (newContainer) {
+        newContainer.addEventListener('scroll', handleScroll);
+        parentElScrollLeft.value = newContainer.scrollLeft; // 确保更新初始值
+    }
 });
 </script>
 

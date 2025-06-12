@@ -13,7 +13,7 @@
         </timeline-track>
 
         <Moveable ref="moveableRef" v-bind="moveableStore.attributes" :target="moveableStore.target"
-            :elementGuidelines="[]"
+            :elementGuidelines="moveableStore.elementGuidelines"
             :scrollOptions="({ container: '.timeline-tracks', threshold: 30, checkScrollEvent: false, throttleTime: 0 })"
             :bounds="{ left: 0, top: justifyCenter ? 0 : undefined, bottom: 0, position: 'css' }"
             @scroll="moveableStore.onScroll" @drag="moveableStore.onDrag" @dragStart="moveableStore.onDragStart"
@@ -46,8 +46,10 @@ const justifyCenter = ref(true)
 
 const { height } = useElementSize(container)
 
-watch(() => [container.value, timelineStore.tracks?.length], () => {
+// 监听轨道数量和容器高度，决定是否垂直居中
+watch(() => [container.value, timelineStore.tracks?.length, , height.value], () => {
     if (container.value && timelineStore.tracks && height.value) {
+        // 假设每个轨道高度大约是 65px
         justifyCenter.value = timelineStore.tracks.length * 65 < height.value
     }
 }, {

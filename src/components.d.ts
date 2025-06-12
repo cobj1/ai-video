@@ -43,6 +43,8 @@ declare module 'vue' {
     TimelineScale: typeof import('./components/timeline/TimelineScale.vue')['default']
     TimelineTool: typeof import('./components/timeline/TimelineTool.vue')['default']
     TimelineTrack: typeof import('./components/timeline/track/TimelineTrack.vue')['default']
+    TimelineTrackControl: typeof import('./components/timeline/track/TimelineTrackControl.vue')['default']
+    TimelineTrackControls: typeof import('./components/timeline/track/TimelineTrackControls.vue')['default']
     TimelineTracks: typeof import('./components/timeline/track/TimelineTracks.vue')['default']
     TimelineZoomLevel: typeof import('./components/timeline/TimelineZoomLevel.vue')['default']
     ViewportControl: typeof import('./components/ViewportControl.vue')['default']

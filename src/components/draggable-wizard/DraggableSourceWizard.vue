@@ -1,7 +1,7 @@
 <template>
     <div class="draggable-wizard" ref="draggableWizardRef" :style="{'padding':`${draggableWizardStore.wizardConfig.padding}px`}"  v-if="draggableWizardStore.target">
         <v-card>
-            <v-img :src="draggableWizardStore.data.cover" class="align-end"
+            <v-img :src="draggableWizardStore.data.thumb" class="align-end"
                 gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" :width="draggableWizardStore.wizardConfig.width" :height="draggableWizardStore.wizardConfig.height" cover>
                 <v-card-title class="text-white" v-text="draggableWizardStore.data.title"></v-card-title>
             </v-img>
