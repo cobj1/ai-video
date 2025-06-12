@@ -1,5 +1,6 @@
 <template>
-    <div class="timeline-ruler overflow-hidden" :style="{ width: timelineStore.totalTimelineWidth + 'px' }" @wheel="handleMouseWheel">
+    <div class="timeline-ruler overflow-hidden" :style="{ width: timelineStore.totalTimelineWidth + 'px' }"
+        @wheel="handleMouseWheel">
         <div class="ruler-marks-container">
             <div v-for="mark in visibleRulerMarks" :key="mark.frame"
                 :style="{ left: (mark.frame * timelineStore.pixelsPerFrame) + 'px' }"
@@ -75,7 +76,7 @@ const visibleRulerMarks = computed<RulerMark[]>(() => {
     const projectFPS = timelineStore.frameRate;
     const currentPixelsPerFrame = timelineStore.pixelsPerFrame;
     const projectTotalFrames = timelineStore.contentDurationFrames;
-
+    
     // 获取当前可见区域的帧范围 (基于滚动位置)
     const viewportWidth = wrapperWidth.value || window.innerWidth;
 
@@ -174,9 +175,6 @@ onMounted(() => {
         // 初始化时设置一次滚动位置
         parentElScrollLeft.value = scrollParentEl.value.scrollLeft;
     }
-    // 初始化时间轴内容，例如设置总帧数和帧率
-    timelineStore.setContentDuration(1000); // 示例：总共 1000 帧
-    timelineStore.setFrameRate(30);       // 示例：30 FPS
 });
 
 onUnmounted(() => {

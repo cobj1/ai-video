@@ -7,7 +7,7 @@ import { computed, ref } from "vue";
 export const useTimelineStore = defineStore("timeline", () => {
   // --- 核心缩放状态：每帧对应的像素宽度 ---
   // 这将是时间轴渲染计算的主要依据
-  const pixelsPerFrame = ref(50); // 默认值，例如 10px/帧
+  const pixelsPerFrame = ref(10); // 默认值，例如 10px/帧
 
   // --- 项目基本信息 ---
   const frameRate = ref(30); // 帧速率，每秒多少帧 (Project FPS)
@@ -142,9 +142,13 @@ export const useTimelineStore = defineStore("timeline", () => {
         }
       }
     }
+
     // 确保时间轴至少有一定的默认长度 (例如，为了初始显示)
     // 否则如果没有任何切片，总时长会是0，时间轴会消失
-    contentDurationFrames.value = Math.max(maxEndFrame, frameRate.value * 10); // 至少10秒的时长
+    contentDurationFrames.value = Math.max(
+      maxEndFrame * 1.5,
+      frameRate.value * 60
+    ); // 至少30秒的时长
   }
 
   // --- 导出状态和 Actions ---

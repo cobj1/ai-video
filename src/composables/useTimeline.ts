@@ -208,4 +208,6 @@ export const useUpdateClipStartFrame = (clipid: string) => {
 
     clip.startFrame = start;
   }
+
+  timelineStore.updateContentDurationBasedOnClips()
 };
