@@ -17,7 +17,8 @@
             :scrollOptions="({ container: '.timeline-tracks', threshold: 30, checkScrollEvent: false, throttleTime: 0 })"
             :bounds="{ left: 0, top: justifyCenter ? 0 : undefined, bottom: 0, position: 'css' }"
             @scroll="moveableStore.onScroll" @drag="moveableStore.onDrag" @dragStart="moveableStore.onDragStart"
-            @dragEnd="moveableStore.onDragEnd" @resize="moveableStore.onResize" @render="moveableStore.onRender" />
+            @dragEnd="moveableStore.onDragEnd" @resizeEnd="moveableStore.onResizeEnd"
+            @render="moveableStore.onRender" />
     </v-sheet>
 </template>
 
@@ -28,7 +29,7 @@
 import Moveable from "vue3-moveable";
 import '@/styles/moveable.scss'
 import { useTimelineStore } from '@/stores/timeline';
-import { markRaw, ref, watch, onMounted } from "vue";
+import { markRaw, ref, watch, onMounted, nextTick } from "vue";
 import { useMoveableStore } from "@/stores/moveable";
 import { useElementSize } from '@vueuse/core'
 
@@ -47,10 +48,16 @@ const justifyCenter = ref(true)
 const { height } = useElementSize(container)
 
 // 监听轨道数量和容器高度，决定是否垂直居中
-watch(() => [container.value, timelineStore.tracks?.length, , height.value], () => {
+watch(() => [container.value, timelineStore.tracks?.length, height.value], () => {
     if (container.value && timelineStore.tracks && height.value) {
         // 假设每个轨道高度大约是 65px
         justifyCenter.value = timelineStore.tracks.length * 65 < height.value
+    }
+
+    if (moveableStore.target && moveableRef.value) {
+        nextTick(() => {
+            moveableRef.value.updateTarget();
+        });
     }
 }, {
     immediate: true
@@ -64,7 +71,7 @@ onMounted(() => {
         mediaType: 'video',
         name: 'video@123',
         startFrame: 10,
-        durationFrames: 30,
+        durationFrames: 5,
         mediaSourcePath: '',
     });
 });

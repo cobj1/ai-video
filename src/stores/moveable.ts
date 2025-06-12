@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import {
   useMouseInTrack,
   useMouseInTrackTop,
@@ -8,6 +8,7 @@ import {
   useTransferTrack,
   useClipFocus,
   useClipOrigin,
+  useFindClipByClipid,
 } from "@/composables/useTimeline";
 import { useTimelineStore } from "@/stores/timeline";
 
@@ -67,6 +68,14 @@ const elementGuidelines = computed<HTMLElement[]>(() => {
   return clipElements;
 });
 
+watch([() => [timelineStore.pixelsPerFrame]], () => {
+  if (target.value && getMoveableRef.value) {
+    nextTick(() => {
+      moveableRef.value.updateTarget();
+    });
+  }
+});
+
 const onDragStart = (e: any) => {
   dragging.value = true;
 };
@@ -76,7 +85,9 @@ const onDrag = (e: any) => {};
 const onDragEnd = (e: any) => {
   dragging.value = false;
 
-  useUpdateClipStartFrame(e.target.id);
+  const clipId = e.target.id;
+
+  useUpdateClipStartFrame(clipId);
 
   const track = useMouseInTrack(e.inputEvent);
 
@@ -92,28 +103,44 @@ const onDragEnd = (e: any) => {
       `新视频轨道 ${index + 1}`
     );
 
-    if (useTransferTrack(e.target.id, newTrack.id)) {
-      useClipFocus(e.target.id);
+    if (useTransferTrack(clipId, newTrack.id)) {
+      useClipFocus(clipId);
     } else {
-      useClipOrigin(e.target.id);
+      useClipOrigin(clipId);
     }
   } else if (track) {
     /* 资源更换图层 */
-    if (useTransferTrack(e.target.id, track.id)) {
-      useClipFocus(e.target.id);
+    if (useTransferTrack(clipId, track.id)) {
+      useClipFocus(clipId);
     } else {
-      useClipOrigin(e.target.id);
+      useClipOrigin(clipId);
     }
   } else {
-    useClipOrigin(e.target.id);
+    useClipOrigin(clipId);
   }
 };
 
-const onResize = (e: any) => {
-  console.log(e);
-  // e.target.style.width = `${e.width}px`;
-  // e.target.style.height = `${e.height}px`;
-  // e.target.style.transform = e.drag.transform;
+const onResizeEnd = (e: any) => {
+  const clipId = e.target.id;
+
+  const currentClip = useFindClipByClipid(clipId);
+
+  if (!currentClip) return;
+
+  // Moveable 提供的 width 是 DOM 元素的当前宽度
+  const newWidthPixels = e.lastEvent.width;
+
+  let newDurationFrames = Math.round(
+    newWidthPixels / timelineStore.pixelsPerFrame
+  );
+
+  newDurationFrames = Math.max(1, newDurationFrames); // 最小 1 帧
+
+  currentClip.durationFrames = newDurationFrames;
+
+  useUpdateClipStartFrame(clipId);
+
+  useClipOrigin(clipId);
 };
 
 const onRender = (e: any) => {
@@ -154,7 +181,7 @@ export const useMoveableStore = defineStore("moveable", () => {
     onDrag,
     onDragStart,
     onDragEnd,
-    onResize,
+    onResizeEnd,
     onRender,
     onScroll,
     onClickClip,
