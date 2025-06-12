@@ -16,6 +16,11 @@ export const useTimelineStore = defineStore("timeline", () => {
   // --- 时间轴轨道和切片数据 ---
   const tracks = ref<Track[]>([]); // 新增：存储所有轨道的数据
 
+  // --- 播放头状态 ---
+  const currentPlayheadFrame = ref(0); // 播放头的当前帧
+
+  const isPlayheadDragging = ref(false); // 播放头拖动状态
+
   // --- 计算属性 ---
   // 计算时间轴的总像素宽度
   const totalTimelineWidth = computed(() => {
@@ -46,6 +51,18 @@ export const useTimelineStore = defineStore("timeline", () => {
    */
   function setContentDuration(duration: number) {
     contentDurationFrames.value = duration;
+  }
+
+  /**
+   * 设置播放头的当前位置（帧）。
+   * @param frame 要设置播放头的帧数。
+   */
+  function setPlayheadFrame(frame: number) {
+    // 确保播放头在有效范围内 (0 到 contentDurationFrames)
+    currentPlayheadFrame.value = Math.max(
+      0,
+      Math.min(frame, contentDurationFrames.value)
+    );
   }
 
   /**
@@ -158,9 +175,12 @@ export const useTimelineStore = defineStore("timeline", () => {
     contentDurationFrames,
     totalTimelineWidth,
     tracks,
+    currentPlayheadFrame,
+    isPlayheadDragging,
     setPixelsPerFrame,
     setFrameRate,
     setContentDuration,
+    setPlayheadFrame,
     insertTrack,
     addClip,
     updateClip,

@@ -1,6 +1,6 @@
 <template>
-    <div class="timeline-ruler overflow-hidden" :style="{ width: timelineStore.totalTimelineWidth + 'px' }"
-        @wheel="handleMouseWheel">
+    <div class="timeline-ruler overflow-hidden" ref="timelineRulerRef"
+        :style="{ width: timelineStore.totalTimelineWidth + 'px' }" @wheel="handleMouseWheel" @click="handleRulerClick">
         <div class="ruler-marks-container">
             <div v-for="mark in visibleRulerMarks" :key="mark.frame"
                 :style="{ left: (mark.frame * timelineStore.pixelsPerFrame) + 'px' }"
@@ -31,6 +31,22 @@ const { width: wrapperWidth } = useElementSize(scrollParentEl);
 // 存储滚动容器的 scrollLeft
 const parentElScrollLeft = ref(0)
 
+const timelineRulerRef = shallowRef<HTMLDivElement | null>(null);
+
+// --- 处理标尺点击事件 ---
+const handleRulerClick = (e: MouseEvent) => {
+    // 只有当播放头没有被拖动时才处理点击事件
+    if (timelineStore.isPlayheadDragging) return;
+
+    if (!scrollParentEl.value || !timelineRulerRef.value) return;
+
+    const scrollLeft = scrollParentEl.value.scrollLeft;
+    const rulerRect = scrollParentEl.value.getBoundingClientRect();
+    const mouseXInRuler = e.clientX - rulerRect.left + scrollLeft;
+
+    const newFrame = Math.round(mouseXInRuler / timelineStore.pixelsPerFrame);
+    timelineStore.setPlayheadFrame(newFrame);
+};
 
 // --- 鼠标滚轮缩放 ---
 const handleMouseWheel = (e: WheelEvent) => {
@@ -76,7 +92,7 @@ const visibleRulerMarks = computed<RulerMark[]>(() => {
     const projectFPS = timelineStore.frameRate;
     const currentPixelsPerFrame = timelineStore.pixelsPerFrame;
     const projectTotalFrames = timelineStore.contentDurationFrames;
-    
+
     // 获取当前可见区域的帧范围 (基于滚动位置)
     const viewportWidth = wrapperWidth.value || window.innerWidth;
 
