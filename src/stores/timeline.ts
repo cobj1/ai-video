@@ -1,4 +1,5 @@
 // stores/timeline.ts
+import { useFindTrackByTrackId } from "@/composables/useTimeline";
 import type { Clip, Track } from "@/types/timeline";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
@@ -82,8 +83,9 @@ export const useTimelineStore = defineStore("timeline", () => {
   function addClip(
     trackId: string,
     clipData: Omit<Clip, "id" | "trackId" | "el">
-  ) {
-    const track = tracks.value.find((t) => t.id === trackId);
+  ): Clip | null {
+    const track = useFindTrackByTrackId(trackId); // 确保轨道存在
+
     if (track) {
       const newClip: Clip = {
         id: `clip-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
@@ -94,9 +96,12 @@ export const useTimelineStore = defineStore("timeline", () => {
       track.clips.push(newClip);
       // 根据新切片更新时间轴总时长，确保切片可见
       updateContentDurationBasedOnClips();
+
+      return newClip; // 返回新切片
     } else {
       console.warn(`Track with ID ${trackId} not found. Cannot add clip.`);
     }
+    return null; // 返回 null 表示添加失败
   }
 
   /**

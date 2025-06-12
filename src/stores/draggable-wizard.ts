@@ -85,24 +85,28 @@ const onDragenter = (event: any) => {
   const timelineStore = useTimelineStore();
   const moveableStore = useMoveableStore();
 
-  const clip = {
+  const clip = timelineStore.addClip(timelineStore.tracks[0].id, {
     mediaType: "video",
     name: "video@123",
     startFrame: 10,
     durationFrames: 30,
     mediaSourcePath: "",
-  } as Clip;
-  timelineStore.addClip("", clip);
+  });
+
+  target.value = null;
+
+  data.value = null;
+
+  if (clip == null) {
+    console.warn("添加切片失败，可能是因为目标轨道不存在或其他错误。");
+    return;
+  }
 
   nextTick(() => {
     moveableStore.target = clip.el;
 
     useTriggerDragStart(moveableStore.target);
   });
-
-  target.value = null;
-
-  data.value = null;
 };
 
 /**
