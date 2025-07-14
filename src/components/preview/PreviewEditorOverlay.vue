@@ -7,7 +7,7 @@
                 left: `${clip.x}px`,
                 top: `${clip.y}px`,
                 // Moveable 内部会操作 transform，这里设置初始 transform
-                transform: `scale(${clip.scaleX}, ${clip.scaleY}) rotate(${clip.rotation}deg)`,
+                transform: `scale(${clip.scaleX}, ${clip.scaleY})`,
                 // 这里的 width/height 也是设计分辨率下的原始像素值，它们也会被 viewportScale 影响
                 // 如果你的 etro.js 图层源本身没有固定尺寸，可以这里设置一个参考尺寸让 Moveable 作用
                 // 假设你的设计分辨率是 1920x1080，我们希望 clip.x/y/scaleX/Y 对应这个分辨率
@@ -26,10 +26,9 @@
         </div>
 
         <Moveable ref="moveableRef" class="moveable-instance" :target="target" :draggable="true" :resizable="true"
-            :rotatable="true" :scalable="true" :keepRatio="true" :throttleResize="1" :throttleDrag="1"
-            :throttleScale="0.01" :throttleRotate="0.5" :origin="false" @drag="onDrag" @resize="onResize"
-            @scale="onScale" @rotate="onRotate" @dragEnd="onDragEnd" @resizeEnd="onResizeEnd" @scaleEnd="onScaleEnd"
-            @rotateEnd="onRotateEnd" />
+            :scalable="true" :keepRatio="true" :throttleResize="1" :throttleDrag="1" :throttleScale="0.01"
+            :origin="false" @drag="onDrag" @resize="onResize" @scale="onScale" @dragEnd="onDragEnd"
+            @resizeEnd="onResizeEnd" />
     </div>
 </template>
 
@@ -104,34 +103,6 @@ const onOverlayMouseDown = (e: MouseEvent) => {
     }
 };
 
-// watch(selectedClipTarget, (newTarget) => {
-//     if (moveableRef.value) {
-//         nextTick(() => {
-//             moveableRef.value.updateTarget();
-//             // 每次选中目标更新时，确保 Moveable 知道目标当前的位置和变换
-//             // 这一步对于 Moveable 内部的精确计算很重要
-//             if (newTarget) {
-//                 const clip = currentSelectedClip.value;
-//                 if (clip) {
-//                     // 将存储在 store 中的设计分辨率值，转换为 Moveable 目标元素所需的实际 DOM 属性
-//                     // newTarget.style.left = `${clip.x * props.viewportScale}px`;
-//                     // newTarget.style.top = `${clip.y * props.viewportScale}px`;
-//                     // newTarget.style.transform = `scale(${clip.scaleX}, ${clip.scaleY}) rotate(${clip.rotation}deg)`;
-//                     // 如果你的 Moveable 目标元素宽度/高度与 etro.js 渲染的原始尺寸相关
-//                     // 则需要在这里设置一个基于原始设计尺寸的宽度和高度，Moveable 会基于此计算
-//                     // 否则 Moveable 会使用 DOM 元素的默认或计算出的 width/height
-//                     // 例如，假设 etro.js 渲染的图像/视频原始尺寸是 1920x1080 / 100x100，
-//                     // 那么 Moveable 目标元素的初始尺寸应该与 etro.js 的图层原始尺寸相对应，
-//                     // 这样 Moveable 报告的 scale 才能准确对应 etro.js layer.scale
-//                     // 这里我们假设 clip 的原始尺寸是 100x100px (在设计分辨率下)
-//                     // newTarget.style.width = `${100 * props.viewportScale}px`;
-//                     // newTarget.style.height = `${100 * props.viewportScale}px`;
-//                 }
-//             }
-//         });
-//     }
-// }, { immediate: true });
-
 
 
 // --- Moveable Event Handlers ---
@@ -159,9 +130,6 @@ const onScale = (event: any) => {
     event.target.style.transform = event.drag.transform;
 };
 
-const onRotate = (event: any) => {
-    event.target.style.transform = event.drag.transform;
-};
 
 // 将 Moveable 的结束事件同步到 Pinia Store，这里需要进行反向缩放
 const onDragEnd = (event: any) => {
@@ -192,56 +160,18 @@ const onResizeEnd = (event: any) => {
 
     const matrix = new DOMMatrix(event.lastEvent.transform);
 
+    const newX = clip.x + matrix.e;
     const newY = clip.y + matrix.f;
 
     timelineStore.updateClip(clipId, {
+        x: newX,
         y: newY,
         width: event.lastEvent.width,
         height: event.lastEvent.height
     });
 };
 
-const onScaleEnd = (event: any) => {
-    if (!currentSelectedClip.value || props.viewportScale === 0) return;
-    const clipId = currentSelectedClip.value.id;
-    const { scale, transform, rotate } = event.lastEvent; // scale 是一个数组 [scaleX, scaleY]
-    const { translateX, translateY } = transform;
 
-    // Moveable 报告的 scale 已经是相对缩放。这里不需要再次除以 viewportScale
-    // Moveable 的 scale 是相对于它 target 的初始尺寸的缩放。
-    // 但是 translate 仍然需要反向缩放。
-    const newX = translateX / props.viewportScale;
-    const newY = translateY / props.viewportScale;
-
-    timelineStore.updateClip(clipId, {
-        x: newX,
-        y: newY,
-        scaleX: scale[0],
-        scaleY: scale[1],
-        rotation: rotate
-    });
-    console.log(`Clip ${clipId} scaled to scaleX:${scale[0]}, scaleY:${scale[1]} (adjusted by scale: ${props.viewportScale})`);
-};
-
-const onRotateEnd = (event: any) => {
-    if (!currentSelectedClip.value || props.viewportScale === 0) return;
-    const clipId = currentSelectedClip.value.id;
-    const { rotate, transform, scale } = event.lastEvent; // rotate 是角度
-    const { translateX, translateY } = transform;
-
-    // 反向缩放获取设计分辨率下的新位置
-    const newX = translateX / props.viewportScale;
-    const newY = translateY / props.viewportScale;
-
-    timelineStore.updateClip(clipId, {
-        x: newX,
-        y: newY,
-        rotation: rotate,
-        scaleX: scale[0], // 同时更新缩放（如果发生）
-        scaleY: scale[1],
-    });
-    console.log(`Clip ${clipId} rotated to ${rotate}deg (adjusted by scale: ${props.viewportScale})`);
-};
 
 onMounted(() => {
     if (timelineStore.tracks.length > 0 && timelineStore.tracks[0].clips.length > 0) {
