@@ -2,7 +2,7 @@
     <div ref="wrapper" class="scale-wrapper">
         <div ref="content" class="scale-content "
             :style="{ transform: `scale(${scale}) translate(-50%, -50%)`, width: `${designWidth}px`, height: `${designHeight}px` }">
-            <slot></slot>
+            <slot :scale="scale"></slot>
         </div>
     </div>
 </template>
@@ -64,6 +64,10 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', calculateScale);
 })
 
+// 暴露 scale 值，以便父组件可以访问
+defineExpose({
+    scale
+});
 </script>
 
 <style scoped>

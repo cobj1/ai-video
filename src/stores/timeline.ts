@@ -1,5 +1,8 @@
 // stores/timeline.ts
-import { useFindTrackByTrackId } from "@/composables/useTimeline";
+import {
+  useFindTrackByTrackId,
+  useFindTrackByClipid,
+} from "@/composables/useTimeline";
 import type { Clip, Track } from "@/types/timeline";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
@@ -127,21 +130,30 @@ export const useTimelineStore = defineStore("timeline", () => {
    * @param updates 一个包含要更新属性的对象。
    */
   function updateClip(clipId: string, updates: Partial<Clip>) {
-    for (const track of tracks.value) {
-      const clipIndex = track.clips.findIndex((c) => c.id === clipId);
-      if (clipIndex !== -1) {
-        // 使用 Object.assign 浅合并更新，保持响应性
-        Object.assign(track.clips[clipIndex], updates);
-        // 如果切片位置或时长改变，可能需要更新总时长
-        if (
-          updates.startFrame !== undefined ||
-          updates.durationFrames !== undefined
-        ) {
-          updateContentDurationBasedOnClips();
-        }
-        return; // 找到并更新后即可退出
-      }
+    const track = useFindTrackByClipid(clipId); // 确保切片存在
+
+    if (!track) {
+      console.warn(
+        `Track for clip with ID ${clipId} not found. Cannot update.`
+      );
+      return;
     }
+
+    const clipIndex = track.clips.findIndex((c: Clip) => c.id === clipId);
+
+    if (clipIndex !== -1) {
+      // 使用 Object.assign 浅合并更新，保持响应性
+      Object.assign(track.clips[clipIndex], updates);
+      // 如果切片位置或时长改变，可能需要更新总时长
+      if (
+        updates.startFrame !== undefined ||
+        updates.durationFrames !== undefined
+      ) {
+        updateContentDurationBasedOnClips();
+      }
+      return; // 找到并更新后即可退出
+    }
+    
     console.warn(`Clip with ID ${clipId} not found. Cannot update clip.`);
   }
 

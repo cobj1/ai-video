@@ -4,12 +4,9 @@
  */
 import { defineStore } from "pinia";
 import { nextTick, ref } from "vue";
-import { useDataStore } from "./data";
-import { v4 as uuid } from "uuid";
 import { useMoveableStore } from "./moveable";
 import { useTriggerDragStart } from "@/composables/useElement";
 import { useTimelineStore } from "./timeline";
-import type { Clip } from "@/types/timeline";
 
 /**
  * 精灵属性配置

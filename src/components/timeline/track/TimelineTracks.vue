@@ -71,8 +71,16 @@ onMounted(() => {
         mediaType: 'video',
         name: 'video@123',
         startFrame: 10,
-        durationFrames: 5,
+        durationFrames: 30,
         mediaSourcePath: '',
+        x: 100,
+        y: 100,
+        width: 500,
+        height: 500,
+        scaleX: 1,
+        scaleY: 1,
+        rotation: 0,
+        opacity: 1
     });
 });
 

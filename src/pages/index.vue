@@ -11,9 +11,11 @@
           <pane min-size="50">
             <v-sheet class="pa-4 d-flex flex-column" height="100%" width="100%">
               <viewport-wrapper ref="viewportWrapperRef">
-                <preview-area></preview-area>
+                <template #default="{ scale }">
+                  <preview-area :viewport-scale="scale"></preview-area>
+                </template>
               </viewport-wrapper>
-              <viewport-control></viewport-control>
+              <preview-area-controls></preview-area-controls>
             </v-sheet>
           </pane>
           <pane min-size="20">
@@ -37,15 +39,15 @@
 import Layout from '@/layout/editor.vue'
 import { Splitpanes, Pane } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
-import { useViewportStore } from '@/stores/editor/viewport'
+import { usePreviewAreaStore } from '@/stores/preview-area'
 import { onMounted, useTemplateRef } from 'vue'
 import { useFullscreen } from '@vueuse/core'
 
-const viewportStore = useViewportStore()
+const previewAreaStore = usePreviewAreaStore()
 
 const el = useTemplateRef<HTMLElement>('viewportWrapperRef')
 
-onMounted(() => viewportStore.fullscreenControl = useFullscreen(el))
+onMounted(() => previewAreaStore.fullscreenControl = useFullscreen(el))
 </script>
 
 <style scoped>

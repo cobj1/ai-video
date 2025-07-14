@@ -15,15 +15,15 @@
             </h3>
 
             <v-tabs class="flex-0-0	" v-model="tab" color="primary">
-                <v-tab class="text-none" prepend-icon="mdi-database-outline" text="Base" value="base" />
+                <v-tab class="text-none" prepend-icon="mdi-shopping-outline" text="Default" value="default" />
 
-                <v-tab class="text-none" prepend-icon="mdi-check-decagram-outline" text="Local" value="two" />
+                <v-tab class="text-none" prepend-icon="mdi-laptop" text="Local" value="local" />
             </v-tabs>
 
             <v-divider />
 
             <v-tabs-window class="mt-4" v-model="tab">
-                <v-tabs-window-item value="base">
+                <v-tabs-window-item value="default">
                     <v-row>
                         <v-col v-for="(item, i) in items" :key="i" cols="12" md="6" sm="12">
                             <draggable-source-container :data='{
@@ -46,7 +46,7 @@
                     </v-row>
                 </v-tabs-window-item>
 
-                <v-tabs-window-item value="two">
+                <v-tabs-window-item value="local">
                      
                 </v-tabs-window-item>
             </v-tabs-window>
